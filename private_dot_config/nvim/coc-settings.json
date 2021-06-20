@@ -1,0 +1,17 @@
+{
+  "go.enable": true,
+  "go.goplsOptions": {
+    "completeUnimported": true
+  },
+  "coc.preferences.formatOnSaveFiletypes": ["rust", "go", "rescript"],
+
+  "languageserver": {
+    "rescript": {
+      "enable": true,
+      "module": "~/.config/nvim/plugged/vim-rescript/rescript-vscode/extension/server/out/server.js",
+      "args": ["--node-ipc"],
+      "filetypes": ["rescript"],
+      "rootPatterns": ["bsconfig.json"]
+    }
+  }
+}
