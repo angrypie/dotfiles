@@ -1,5 +1,6 @@
 angrypie/fish-theme
-jhillyerd/plugin-git
 jethrokuan/z
 jethrokuan/fzf
 jorgebucaran/nvm.fish
+jhillyerd/plugin-git
+jorgebucaran/autopair.fish
