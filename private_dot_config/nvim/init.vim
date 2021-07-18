@@ -1,6 +1,7 @@
 let path = system('pwd')
 
 :source ~/.config/nvim/settings.vim
+"
 
 "=========================
 "=== START PLUGINS SECTION
@@ -9,6 +10,8 @@ call plug#begin("~/.config/nvim/plugged")
 
 " Pulg is syntax language pack for Vim.
 Plug 'sheerun/vim-polyglot'
+Plug 'phaazon/hop.nvim'
+
 
 
 " Color scheme
@@ -19,7 +22,6 @@ Plug 'arcticicestudio/nord-vim'
 Plug 'jiangmiao/auto-pairs'
 Plug 'scrooloose/nerdcommenter'
 Plug 'terryma/vim-multiple-cursors'
-Plug 'easymotion/vim-easymotion'
 
 
 " Appearance
@@ -75,10 +77,12 @@ autocmd BufWritePre *.go :silent call CocAction('runCommand', 'editor.action.org
 command! -nargs=0 OR :call CocAction('format')
 autocmd BufWritePre *.go :OR
 autocmd BufWritePre *.re :OR
+"
+"hop.nvim
+map <Leader>s :HopWord<cr>
+lua require'hop.highlight'.insert_highlights()
 
 
-"easymotion
-map <Leader> <Plug>(easymotion-prefix)
 
 exe "cd " . path
 
