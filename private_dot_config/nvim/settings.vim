@@ -98,13 +98,26 @@ nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
 nmap <leader>ac  <Plug>(coc-codeaction)
 "Always show sign column
-set signcolumn=yes
+set signcolumn=number
 "Highlight errors background
 hi CocUnderline ctermbg=DarkGrey
 
 " coc-prettier
 vmap <leader>p  <Plug>(coc-format-selected)
 nmap <leader>p  :CocCommand prettier.formatFile<CR>
+
+" Use K to show documentation in preview window.
+nnoremap <silent> H :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  elseif (coc#rpc#ready())
+    call CocActionAsync('doHover')
+  else
+    execute '!' . &keywordprg . " " . expand('<cword>')
+  endif
+endfunction
 
 
 let g:multi_cursor_exit_from_insert_mode = 0
@@ -172,7 +185,7 @@ no E D
 no U F
 no I G
 no D H
-no H J
+"no H J
 no T K
 no N L
 "no S :
