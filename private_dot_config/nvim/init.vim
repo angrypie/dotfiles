@@ -36,8 +36,6 @@ Plug 'junegunn/goyo.vim', { 'on': 'Goyo' }
 " ================
 "Autocompletion
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-"Rescript support
-Plug 'rescript-lang/vim-rescript', { 'for': 'rescript' }
 
 "Fuzzy find
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
