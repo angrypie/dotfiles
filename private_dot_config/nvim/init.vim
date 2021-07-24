@@ -11,14 +11,12 @@ call plug#begin("~/.config/nvim/plugged")
 Plug 'phaazon/hop.nvim' "Easy-motion like file navigation
 Plug 'hoob3rt/lualine.nvim' "Fast statusline plugin
 Plug 'windwp/nvim-autopairs' "autopairs lua plugin
+Plug 'arcticicestudio/nord-vim' "Original nord now supports treesitter
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} "Update parser on PlugUpdate
 
 " Pulg is syntax language pack for Vim.
-Plug 'sheerun/vim-polyglot'
+"Plug 'sheerun/vim-polyglot'
 
-
-
-" Color scheme
-Plug 'arcticicestudio/nord-vim'
 
  "Text Editor behavior
 Plug 'scrooloose/nerdcommenter'
@@ -56,7 +54,6 @@ if (has("termguicolors"))
 	set termguicolors
 endif
 
-colorscheme nord
 
 "===== AUTOCMD ====
 "==================
@@ -74,11 +71,21 @@ autocmd BufWritePre *.re :OR
 map <Leader>s :HopWord<cr>
 lua require'hop.highlight'.insert_highlights()
 
+colorscheme nord
+
 "-- Lua code
 "
 lua << EOF
 require("lualine").setup({ options = { theme = 'nord' } })
 require("nvim-autopairs").setup()
+
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = "maintained", 
+  highlight = {
+    enable = true,
+  },
+}
+
 EOF
 
 
