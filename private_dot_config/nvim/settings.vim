@@ -13,8 +13,6 @@ set confirm "using dialog for warning
 set noshowmode
 
 
-"set laststatus=2
-"set noswapfile
 set visualbell
 
 
@@ -28,10 +26,6 @@ set tabstop=2
 set softtabstop=2
 set shiftwidth=2
 set noexpandtab
-
-"set colorcolumn=110
-"highlight ColorColumn ctermbg=darkgrey
-
 
 "indent settings
 set showcmd 
@@ -49,19 +43,6 @@ let g:user_emmet_install_global = 0
 let g:user_emmet_leader_key='Z'
 
 
-" Vim-go settings
-"Keyword shortcut for GoDoc
-let g:go_doc_keywordprg_enabled = 0
-let g:go_term_mode = "split"
-let g:go_term_enabled = 1
-let g:go_list_type = "quickfix"
-
-let g:go_highlight_functions = 1
-
-let g:go_fmt_command = "goimports"
-"let g:go_metalinter_enabled = ['vet'] 
-"let g:go_metalinter_autosave = 1
-"let g:go_metalinter_autosave_enabled = ['vet']
 
 "jsx
 let g:jsx_ext_required = 0
@@ -193,19 +174,14 @@ no ] =
 no { _
 no } +
 
-"set 'c' mark befor going to the top
-no ii mcgg
-no I mcG
 
+"coc maping to complete suggestions
 ino <C-e> <C-d>
 ino <C-y> <C-t>
 noremap <C-b> n
 noremap <C-S-b> N
 
-nmap ,e :b#<bar>bd#<CR>
-nmap iu gf
-nmap ie gd
-
+"move between panes
 no <C-w>j <C-w>t
 no <C-w>n <C-w>k
 no <C-w>s <C-w>l
@@ -214,13 +190,3 @@ no <C-w>t <C-w>j
 
 "eu is super weapon :)
 ino eu <ESC>
-"TODO is it for comen
-"map / <leader>ci
-
-"surround
-no y" di""<ESC>Pl
-no y' di'<ESC>pa'<ESC>
-no y( di(<ESC>pa)<ESC>
-
-no y) di(<ESC>pa)<ESC>
-map / <leader>ci

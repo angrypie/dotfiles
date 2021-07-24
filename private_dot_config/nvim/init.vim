@@ -92,4 +92,3 @@ EOF
 map / gcc
 
 exe "cd " . path
-
