@@ -7,29 +7,26 @@ let path = system('pwd')
 "=== START PLUGINS SECTION
 "=========================
 call plug#begin("~/.config/nvim/plugged")
+" Lua plugins
+Plug 'phaazon/hop.nvim' "Easy-motion like file navigation
+Plug 'hoob3rt/lualine.nvim' "Fast statusline plugin
+Plug 'windwp/nvim-autopairs' "autopairs lua plugin
 
 " Pulg is syntax language pack for Vim.
 Plug 'sheerun/vim-polyglot'
-Plug 'phaazon/hop.nvim'
 
 
 
 " Color scheme
-Plug 'nanotech/jellybeans.vim'
 Plug 'arcticicestudio/nord-vim'
 
  "Text Editor behavior
-Plug 'jiangmiao/auto-pairs'
 Plug 'scrooloose/nerdcommenter'
 Plug 'terryma/vim-multiple-cursors'
 
 
 " Appearance
 " ==========
-" A light statusline plugin for Vim
-Plug 'itchyny/lightline.vim'
-" Distraction-free writing in Vim
-Plug 'junegunn/goyo.vim', { 'on': 'Goyo' }
 
 
 " Language support
@@ -41,9 +38,6 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
-"==== Tools
-"Send text to terminal (tmux etc.)
-Plug 'jpalardy/vim-slime', { 'for': 'lisp' }
 
 "Snippets
 Plug 'mattn/emmet-vim', { 'for': ['html', 'css', 'javascript',  'javascriptreact', 'typescriptreact', 'rescript'] }
@@ -80,6 +74,12 @@ autocmd BufWritePre *.re :OR
 map <Leader>s :HopWord<cr>
 lua require'hop.highlight'.insert_highlights()
 
+"-- Lua code
+"
+lua << EOF
+require("lualine").setup({ options = { theme = 'nord' } })
+require("nvim-autopairs").setup()
+EOF
 
 
 exe "cd " . path

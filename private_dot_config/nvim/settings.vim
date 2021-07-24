@@ -42,23 +42,12 @@ set autoindent
 set nohlsearch
 set incsearch
 
-"vim-slime plugin setting for tmux
-let g:slime_target = "tmux"
-
-" Status line
-let g:lightline = { 'colorscheme': 'nord' }
-"let g:lightline = { 'colorscheme': 'jellybeans' }
-
-
 
 "Emmet-vim
 let g:user_emmet_install_global = 0
 "	remap the default <C-Y> leader
 let g:user_emmet_leader_key='Z'
 
-
-" Goyo (distraction free mode)
-let g:goyo_height = 100
 
 " Vim-go settings
 "Keyword shortcut for GoDoc
