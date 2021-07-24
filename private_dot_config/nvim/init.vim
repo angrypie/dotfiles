@@ -13,13 +13,13 @@ Plug 'hoob3rt/lualine.nvim' "Fast statusline plugin
 Plug 'windwp/nvim-autopairs' "autopairs lua plugin
 Plug 'arcticicestudio/nord-vim' "Original nord now supports treesitter
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} "Update parser on PlugUpdate
+Plug 'b3nj5m1n/kommentary'
 
 " Pulg is syntax language pack for Vim.
 "Plug 'sheerun/vim-polyglot'
 
 
  "Text Editor behavior
-Plug 'scrooloose/nerdcommenter'
 Plug 'terryma/vim-multiple-cursors'
 
 
@@ -88,6 +88,8 @@ require'nvim-treesitter.configs'.setup {
 
 EOF
 
+"kommentary: map / to comment and uncoment
+map / gcc
 
 exe "cd " . path
 
