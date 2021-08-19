@@ -57,6 +57,7 @@ let $FZF_DEFAULT_COMMAND = 'rg --files'
 let g:coc_global_extensions = ['coc-tslint-plugin', 'coc-tsserver', 'coc-emmet', 'coc-css', 'coc-html', 'coc-json', 'coc-yank', 'coc-prettier', 'coc-snippets', 'coc-go']
 "
 "
+inoremap <silent><expr> <C-f> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
 nmap <leader>rn <Plug>(coc-rename)
 nmap <silent> gd <Plug>(coc-definition)
