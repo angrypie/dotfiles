@@ -122,6 +122,7 @@ no o s
 no e d
 no u f
 no i g
+no ii gg
 no h h
 no t j
 no n k
