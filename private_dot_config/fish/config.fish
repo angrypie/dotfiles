@@ -21,6 +21,7 @@ set -g fish_greeting
 # Set and enable node version for new shell
 set --universal nvm_default_version latest
 
-set -gx PATH /opt/homebrew/bin:$PATH
+fish_add_path /opt/homebrew/bin
 
 set -gx GOPATH $HOME/go; set -gx GOROOT $HOME/.go; set -gx PATH $GOPATH/bin $PATH; # g-install: do NOT edit, see https://github.com/stefanmaric/g
+
