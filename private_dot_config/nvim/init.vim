@@ -69,7 +69,6 @@ autocmd BufWritePre *.re :OR
 "
 "hop.nvim
 map <Leader>s :HopWord<cr>
-lua require'hop.highlight'.insert_highlights()
 
 colorscheme nord
 
@@ -78,13 +77,19 @@ colorscheme nord
 lua << EOF
 require("lualine").setup({ options = { theme = 'nord' } })
 require("nvim-autopairs").setup()
+require'hop'.setup()
 
-require'nvim-treesitter.configs'.setup {
+require('nvim-treesitter.configs').setup {
   ensure_installed = "maintained", 
   highlight = {
     enable = true,
   },
 }
+
+require('kommentary.config').configure_language("default", {
+	prefer_single_line_comments = true,
+})
+
 
 EOF
 

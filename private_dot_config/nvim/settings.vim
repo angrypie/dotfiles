@@ -75,6 +75,7 @@ hi CocUnderline ctermbg=DarkGrey
 
 " coc-prettier
 vmap <leader>p  <Plug>(coc-format-selected)
+nmap <leader>r  :CocCommand editor.action.organizeImport<CR>
 nmap <leader>p  :CocCommand prettier.formatFile<CR>
 
 " Use K to show documentation in preview window.
