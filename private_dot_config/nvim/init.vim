@@ -1,8 +1,6 @@
 let path = system('pwd')
 let mapleader=";"
 
-"
-
 "=========================
 "=== START PLUGINS SECTION
 "=========================
@@ -14,10 +12,6 @@ Plug 'windwp/nvim-autopairs' "autopairs lua plugin
 Plug 'arcticicestudio/nord-vim' "Original nord now supports treesitter
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} "Update parser on PlugUpdate
 Plug 'b3nj5m1n/kommentary'
-
-" Pulg is syntax language pack for Vim.
-"Plug 'sheerun/vim-polyglot'
-
 
  "Text Editor behavior
 Plug 'terryma/vim-multiple-cursors'
@@ -80,7 +74,7 @@ require("nvim-autopairs").setup()
 require'hop'.setup()
 
 require('nvim-treesitter.configs').setup {
-  ensure_installed = "maintained", 
+	ensure_installed = {'go', 'typescript', 'javascript', 'lua', 'vim'}, 
   highlight = {
     enable = true,
   },
@@ -226,27 +220,26 @@ no <C-w>t <C-w>j
 ino eu <ESC>
 
 lua << EOF
-
+-- map sets keymap with devault noremap = true
 function map(mode, lhs, rhs, opts)
-	 local options = { noremap = true, silent = true }
+	 local options = { noremap = true }
     if opts then
         options = vim.tbl_extend("force", options, opts)
     end
     vim.api.nvim_set_keymap(mode, lhs, rhs, options)
 end
 
-function bulk_noremap(modes, remap)
+-- bulk_map sets keymaps for multiple rules and repeats for multiple modes
+function bulk_map(modes, rules)
 	for _, mode in pairs(modes) do 
-		for _, rule in pairs(remap) do
+		for _, rule in pairs(rules) do
 			map(mode,rule[1], rule[2])
 		end
 	end
 end
 
-
 -- my dvorak remap (attention: not all key remaped exactly right) 
-dvorak_remap = {{',','w'},{'.','e'},{'p','r'},{'y','t'},{'f','y'},{'g','u'},{'c','i'},{'r','o'},{'l','p'},{'/','['},{'=',']'},{'a','a'},{'o','s'},{'e','d'},{'u','f'},{'i','g'},{'h','h'},{'t','j'},{'n','k'},{'s','l'},{'-','\''},{';','z'},{'q','x'},{'j','c'},{'k','v'},{'x','b'},{'b','n'},{'m','m'},{'w',','},{'v','.'},{'z','/'},{'"','Q'},{'<','W'},{'>','E'},{'P','R'},{'Y','T'},{'F','Y'},{'G','U'},{'C','I'},{'R','O'},{'L','P'},{'?','{'},{'+','}'},{'A','A'},{'O','S'},{'E','D'},{'U','F'},{'I','G'},{'D','H'},{'T','K'},{'N','L'},{'_','"'},{'Q','X'},{'J','C'},{'K','V'},{'X','B'},{'B','N'},{'W','<'},{'V','>'},{'[','-'},{']','='},{'{','_'},{'}','+'},{'ii', 'gg'}}
-
-bulk_noremap({'n', 'v', 'o'}, dvorak_remap)
+dvorak_keymap_nvo = {{',','w'},{'.','e'},{'p','r'},{'y','t'},{'f','y'},{'g','u'},{'c','i'},{'r','o'},{'l','p'},{'=',']'},{'a','a'},{'o','s'},{'e','d'},{'u','f'},{'i','g'},{'h','h'},{'t','j'},{'n','k'},{'s','l'},{'-','\''},{';','z'},{'q','x'},{'j','c'},{'k','v'},{'x','b'},{'b','n'},{'m','m'},{'w',','},{'v','.'},{'z','/'},{'"','Q'},{'<','W'},{'>','E'},{'P','R'},{'Y','T'},{'F','Y'},{'G','U'},{'C','I'},{'R','O'},{'L','P'},{'?','{'},{'+','}'},{'A','A'},{'O','S'},{'E','D'},{'U','F'},{'I','G'},{'D','H'},{'T','K'},{'N','L'},{'_','"'},{'Q','X'},{'J','C'},{'K','V'},{'X','B'},{'B','N'},{'W','<'},{'V','>'},{'[','-'},{']','='},{'{','_'},{'}','+'},{'ii', 'gg'}}
+bulk_map({'n', 'v', 'o'}, dvorak_keymap_nvo)
 
 EOF
