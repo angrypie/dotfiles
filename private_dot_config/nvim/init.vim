@@ -11,27 +11,14 @@ Plug 'hoob3rt/lualine.nvim' "Fast statusline plugin
 Plug 'windwp/nvim-autopairs' "autopairs lua plugin
 Plug 'arcticicestudio/nord-vim' "Original nord now supports treesitter
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} "Update parser on PlugUpdate
-Plug 'b3nj5m1n/kommentary'
+Plug 'b3nj5m1n/kommentary' "commenting plugin
+Plug 'ibhagwan/fzf-lua', {'branch': 'main'} "Fuzzy search by directories and files
 
- "Text Editor behavior
 Plug 'terryma/vim-multiple-cursors'
 
-
-" Appearance
-" ==========
-
-
-" Language support
-" ================
-"Autocompletion
+"Autocompletion and LSP
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
-"Fuzzy find
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-
-
-"Snippets
 Plug 'mattn/emmet-vim', { 'for': ['html', 'css', 'javascript',  'javascriptreact', 'typescriptreact', 'rescript'] }
 
 "Add plugins to &runtimepath
@@ -84,6 +71,8 @@ require('kommentary.config').configure_language("default", {
 	prefer_single_line_comments = true,
 })
 
+--Configure fzf-lua with default fzf.vim layout
+require('fzf-lua').setup{fzf_opts = { ['--layout'] = "default" }}
 
 EOF
 
@@ -141,9 +130,7 @@ let g:user_emmet_leader_key='Z'
 "jsx
 let g:jsx_ext_required = 0
 
-"fzf fuzzy search
-map <C-p> :FZF<CR>
-let $FZF_DEFAULT_COMMAND = 'rg --files'
+
 
 "coc.nvim settings
 "=================
@@ -238,8 +225,11 @@ function bulk_map(modes, rules)
 	end
 end
 
+-- fzf-lua files search maping
+map('n', '<c-P>', "<cmd>lua require('fzf-lua').files({winopts = { preview = { hidden = 'hidden' }}})<CR>", { silent = true })
+map('n', '<c-F>', "<cmd>lua require('fzf-lua').grep_project()<CR>", { silent = true })
+
 -- my dvorak remap (attention: not all key remaped exactly right) 
-dvorak_keymap_nvo = {{',','w'},{'.','e'},{'p','r'},{'y','t'},{'f','y'},{'g','u'},{'c','i'},{'r','o'},{'l','p'},{'=',']'},{'a','a'},{'o','s'},{'e','d'},{'u','f'},{'i','g'},{'h','h'},{'t','j'},{'n','k'},{'s','l'},{'-','\''},{';','z'},{'q','x'},{'j','c'},{'k','v'},{'x','b'},{'b','n'},{'m','m'},{'w',','},{'v','.'},{'z','/'},{'"','Q'},{'<','W'},{'>','E'},{'P','R'},{'Y','T'},{'F','Y'},{'G','U'},{'C','I'},{'R','O'},{'L','P'},{'?','{'},{'+','}'},{'A','A'},{'O','S'},{'E','D'},{'U','F'},{'I','G'},{'D','H'},{'T','K'},{'N','L'},{'_','"'},{'Q','X'},{'J','C'},{'K','V'},{'X','B'},{'B','N'},{'W','<'},{'V','>'},{'[','-'},{']','='},{'{','_'},{'}','+'},{'ii', 'gg'}}
-bulk_map({'n', 'v', 'o'}, dvorak_keymap_nvo)
+bulk_map({'n', 'v', 'o'}, {{',','w'},{'.','e'},{'p','r'},{'y','t'},{'f','y'},{'g','u'},{'c','i'},{'r','o'},{'l','p'},{'=',']'},{'a','a'},{'o','s'},{'e','d'},{'u','f'},{'i','g'},{'h','h'},{'t','j'},{'n','k'},{'s','l'},{'-','\''},{';','z'},{'q','x'},{'j','c'},{'k','v'},{'x','b'},{'b','n'},{'m','m'},{'w',','},{'v','.'},{'z','/'},{'"','Q'},{'<','W'},{'>','E'},{'P','R'},{'Y','T'},{'F','Y'},{'G','U'},{'C','I'},{'R','O'},{'L','P'},{'?','{'},{'+','}'},{'A','A'},{'O','S'},{'E','D'},{'U','F'},{'I','G'},{'D','H'},{'T','K'},{'N','L'},{'_','"'},{'Q','X'},{'J','C'},{'K','V'},{'X','B'},{'B','N'},{'W','<'},{'V','>'},{'[','-'},{']','='},{'{','_'},{'}','+'},{'ii', 'gg'}})
 
 EOF
