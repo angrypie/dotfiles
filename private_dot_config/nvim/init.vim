@@ -14,11 +14,10 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} "Update parser on Pl
 Plug 'b3nj5m1n/kommentary' "commenting plugin
 Plug 'ibhagwan/fzf-lua', {'branch': 'main'} "Fuzzy search by directories and files
 
+"non lua plugins
 Plug 'terryma/vim-multiple-cursors'
-
 "Autocompletion and LSP
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
 Plug 'mattn/emmet-vim', { 'for': ['html', 'css', 'javascript',  'javascriptreact', 'typescriptreact', 'rescript'] }
 
 "Add plugins to &runtimepath
@@ -38,7 +37,6 @@ endif
 
 "===== AUTOCMD ====
 "==================
-"au BufRead,BufNewFile *.asm set filetype=nasm
 "Emmet enable just for .html, .css and .tag
 autocmd FileType html,css,tag,javascriptreact,typescriptreact,rescript EmmetInstall
 
@@ -82,62 +80,35 @@ map / gcc
 exe "cd " . path
 
 "settings.vim
-"split window
 set splitbelow
 set splitright
-
-filetype plugin on
-
 "interface setings
 set number
-syntax on
-set scrolloff=4 "show lines, top and bottom, while skroling
+set scrolloff=8 "show lines, top and bottom, while skroling
 set confirm "using dialog for warning
 set noshowmode
-
-
-set visualbell
-
-
-"search
-"set hlsearch "highlight searh
-set incsearch
 set ignorecase
-"
-"tab setings
 set tabstop=2
 set softtabstop=2
 set shiftwidth=2
-set noexpandtab
 
-"indent settings
-set showcmd 
-set smartindent
-set autoindent
-
-" search settins
+set signcolumn=number "show signs in place of line numbers
 set nohlsearch
-set incsearch
 
 
 "Emmet-vim
 let g:user_emmet_install_global = 0
 "	remap the default <C-Y> leader
 let g:user_emmet_leader_key='Z'
-
-
-
 "jsx
 let g:jsx_ext_required = 0
-
-
 
 "coc.nvim settings
 "=================
 " Remap keys for gotos
 let g:coc_global_extensions = ['coc-tslint-plugin', 'coc-tsserver', 'coc-emmet', 'coc-css', 'coc-html', 'coc-json', 'coc-yank', 'coc-prettier', 'coc-snippets', 'coc-go']
-"
-"
+
+
 inoremap <silent><expr> <C-f> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
 nmap <leader>rn <Plug>(coc-rename)
@@ -149,8 +120,6 @@ nmap <silent> gr <Plug>(coc-references)
 nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
 nmap <leader>ac  <Plug>(coc-codeaction)
-"Always show sign column
-set signcolumn=number
 "Highlight errors background
 hi CocUnderline ctermbg=DarkGrey
 
@@ -176,18 +145,6 @@ endfunction
 let g:multi_cursor_exit_from_insert_mode = 0
 let g:multi_cursor_quit_key='<C-c>'
 nnoremap <C-c> :call multiple_cursors#quit()<CR>
-
-
-
-
-"This will close vim if the quickfix window is the only window visible (and only tab).
-aug QFClose
-		au!
-	au WinEnter * if winnr('$') == 1 && getbufvar(winbufnr(winnr()), "&buftype") == "quickfix"|q|endif
-aug END
-
-"========= mooved from mapings.vim
-"dvorak mapings
 
 
 "coc maping to complete suggestions
