@@ -19,7 +19,7 @@ abbr --add --global g git && abbr -e g
 set -g fish_greeting
 
 # Set and enable node version for new shell
-set --universal nvm_default_version latest
+set --universal nvm_default_version lts
 
 fish_add_path /opt/homebrew/bin
 

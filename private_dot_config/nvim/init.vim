@@ -109,7 +109,7 @@ let g:jsx_ext_required = 0
 let g:coc_global_extensions = ['coc-tslint-plugin', 'coc-tsserver', 'coc-emmet', 'coc-css', 'coc-html', 'coc-json', 'coc-yank', 'coc-prettier', 'coc-snippets', 'coc-go']
 
 
-inoremap <silent><expr> <C-f> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+inoremap <expr> <C-f> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
 nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
 nmap <leader>rn <Plug>(coc-rename)
 nmap <silent> gd <Plug>(coc-definition)
@@ -146,12 +146,6 @@ let g:multi_cursor_exit_from_insert_mode = 0
 let g:multi_cursor_quit_key='<C-c>'
 nnoremap <C-c> :call multiple_cursors#quit()<CR>
 
-
-"coc maping to complete suggestions
-ino <C-e> <C-d>
-ino <C-y> <C-t>
-noremap <C-b> n
-noremap <C-S-b> N
 
 "move between panes
 no <C-w>j <C-w>t
