@@ -50,8 +50,13 @@ autocmd BufWritePre *.re :OR
 "hop.nvim
 map <Leader>s :HopWord<cr>
 
-colorscheme nord
 
+" copilot
+let b:copilot_enabled = v:false
+ino <M-c> <cmd>let b:copilot_enabled = !b:copilot_enabled<cr>
+
+
+colorscheme nord
 "-- Lua code
 "
 lua << EOF
