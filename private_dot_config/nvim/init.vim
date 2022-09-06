@@ -10,7 +10,7 @@ Plug 'github/copilot.vim'
 Plug 'phaazon/hop.nvim' "Easy-motion like file navigation
 Plug 'hoob3rt/lualine.nvim' "Fast statusline plugin
 Plug 'windwp/nvim-autopairs' "autopairs lua plugin
-Plug 'arcticicestudio/nord-vim' "Original nord now supports treesitter
+Plug 'catppuccin/nvim', {'as': 'catppuccin'}
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} "Update parser on PlugUpdate
 Plug 'b3nj5m1n/kommentary' "commenting plugin
 Plug 'ibhagwan/fzf-lua', {'branch': 'main'} "Fuzzy search by directories and files
@@ -56,11 +56,13 @@ let b:copilot_enabled = v:false
 ino <M-c> <cmd>let b:copilot_enabled = !b:copilot_enabled<cr>
 
 
-colorscheme nord
-"-- Lua code
-"
 lua << EOF
-require("lualine").setup({ options = { theme = 'nord' } })
+
+vim.g.catppuccin_flavour = "macchiato" -- latte, frappe, macchiato, mocha
+require("catppuccin").setup()
+vim.cmd [[colorscheme catppuccin]]
+
+require("lualine").setup({ options = { theme = 'catppuccin' } })
 require("nvim-autopairs").setup()
 require'hop'.setup()
 
@@ -90,6 +92,7 @@ set splitbelow
 set splitright
 "interface setings
 set number
+set relativenumber
 set scrolloff=8 "show lines, top and bottom, while skroling
 set confirm "using dialog for warning
 set noshowmode
