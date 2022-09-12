@@ -46,9 +46,10 @@ autocmd BufWritePre *.go :silent call CocAction('runCommand', 'editor.action.org
 command! -nargs=0 OR :call CocAction('format')
 autocmd BufWritePre *.go :OR
 autocmd BufWritePre *.re :OR
-"
+
 "hop.nvim
-map <Leader>s :HopWord<cr>
+nmap <Leader>s <cmd>HopWord<cr>
+nmap <space> <cmd>HopChar2<cr>
 
 
 " copilot
@@ -58,13 +59,14 @@ ino <M-c> <cmd>let b:copilot_enabled = !b:copilot_enabled<cr>
 
 lua << EOF
 
-vim.g.catppuccin_flavour = "macchiato" -- latte, frappe, macchiato, mocha
+vim.g.catppuccin_flavour = "mocha" -- latte, frappe, macchiato, mocha
 require("catppuccin").setup()
 vim.cmd [[colorscheme catppuccin]]
 
 require("lualine").setup({ options = { theme = 'catppuccin' } })
 require("nvim-autopairs").setup()
 require'hop'.setup()
+vim.cmd [[hi HopNextKey2 guifg=#00dfff]] -- second character same color as first one
 
 require('nvim-treesitter.configs').setup {
 	ensure_installed = {'go', 'typescript', 'javascript', 'lua', 'vim'}, 
@@ -119,7 +121,6 @@ let g:coc_global_extensions = ['coc-tslint-plugin', 'coc-tsserver', 'coc-emmet',
 
 
 inoremap <expr> <C-f> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
-nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
 nmap <leader>rn <Plug>(coc-rename)
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
@@ -193,3 +194,4 @@ map('n', '<c-F>', "<cmd>lua require('fzf-lua').grep_project()<CR>", { silent = t
 bulk_map({'n', 'v', 'o'}, {{',','w'},{'\'', 'q'},{'.','e'},{'p','r'},{'y','t'},{'f','y'},{'g','u'},{'c','i'},{'r','o'},{'l','p'},{'=',']'},{'a','a'},{'o','s'},{'e','d'},{'u','f'},{'i','g'},{'h','h'},{'t','j'},{'n','k'},{'s','l'},{'-','\''},{';','z'},{'q','x'},{'j','c'},{'k','v'},{'x','b'},{'b','n'},{'m','m'},{'w',','},{'v','.'},{'z','/'},{'"','Q'},{'<','W'},{'>','E'},{'P','R'},{'Y','T'},{'F','Y'},{'G','U'},{'C','I'},{'R','O'},{'L','P'},{'?','{'},{'+','}'},{'A','A'},{'O','S'},{'E','D'},{'U','F'},{'I','G'},{'D','H'}, {'H','J'},{'T','K'},{'N','L'},{'_','"'},{'Q','X'},{'J','C'},{'K','V'},{'X','B'},{'B','N'},{'W','<'},{'V','>'},{'[','-'},{']','='},{'{','_'},{'}','+'},{'ii', 'gg'}})
 
 EOF
+
