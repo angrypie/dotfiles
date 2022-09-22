@@ -7,16 +7,21 @@
 
   :simlayers {
               :a-mode {:key :a}
+              :o-mode {:key :s}
               }
   :main [
-         {:des "right command to control" 
-          :rules [
-                  [:caps_lock :left_control]
-                  [:right_command :left_control]
+         {:des "o-mode (option)" 
+          :rules [ :o-mode
+                  [:comma :!Tcomma]
+                  [:j :!Oj]
+                  [:k :!Ok]
+                  [:l :!Ol]
+                  [:semicolon :!Osemicolon]
                   ]}
-         {:des "a" 
+         {:des "a-mode (ctrl)" 
           :rules [ :a-mode
                   [:comma :!Tcomma]
+                  [:y :!Ty]
                   [:n :!Tn]
                   [:u :!Tu]
                   [:d :!Td]
@@ -25,7 +30,13 @@
                   [:l :!Tl]
                   [:i :!Ti]
                   [:s :!Ts]
-                  [:r :!Tr]]}
+                  [:r :!Tr]
+                  ]}
+         {:des "right command to control" 
+          :rules [
+                  [:caps_lock :left_control]
+                  [:right_command :left_control]
+                  ]}
        ]
 }
 
