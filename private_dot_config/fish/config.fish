@@ -10,11 +10,10 @@ alias n=nvim
 
 # Env
 set -gx EDITOR nvim
-set -U FZF_DEFAULT_COMMAND "rg --files \$dir"
+set -U FZF_DEFAULT_COMMAND "rg --files \$dir" # exclude .gitigore files
 set -U FZF_LEGACY_KEYBINDINGS 0
+bind \ef '__fzf_open --editor' # open file in default editor on <Option-f>
 
-# Remove g abbreviation for git. Add abbreviation first to avoid erros if not exist.
-abbr --add --global g git && abbr -e g
 # Remove standart greeting
 set -g fish_greeting
 
@@ -23,5 +22,7 @@ set --universal nvm_default_version lts
 
 fish_add_path /opt/homebrew/bin
 
+# g is a golang plugin manager writen in fish.
+abbr --add --global g git && abbr -e g # Remove g abbreviation for git. Add abbreviation first to avoid erros if not exist.
 set -gx GOPATH $HOME/go; set -gx GOROOT $HOME/.go; set -gx PATH $GOPATH/bin $PATH; # g-install: do NOT edit, see https://github.com/stefanmaric/g
 
