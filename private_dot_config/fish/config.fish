@@ -18,7 +18,7 @@ bind \ef '__fzf_open --editor' # open file in default editor on <Option-f>
 set -g fish_greeting
 
 # Set and enable node version for new shell
-set --universal nvm_default_version lts
+set --universal nvm_default_version latest
 
 fish_add_path /opt/homebrew/bin
 
