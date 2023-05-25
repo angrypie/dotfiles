@@ -5,8 +5,7 @@ let mapleader=";"
 "=== START PLUGINS SECTION
 "=========================
 call plug#begin("~/.config/nvim/plugged")
-Plug 'github/copilot.vim'
-" Lua plugins
+Plug 'zbirenbaum/copilot.lua'
 Plug 'phaazon/hop.nvim' "Easy-motion like file navigation
 Plug 'hoob3rt/lualine.nvim' "Fast statusline plugin
 Plug 'windwp/nvim-autopairs' "autopairs lua plugin
@@ -14,7 +13,7 @@ Plug 'catppuccin/nvim', {'as': 'catppuccin'}
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} "Update parser on PlugUpdate
 Plug 'b3nj5m1n/kommentary' "commenting plugin
 Plug 'ibhagwan/fzf-lua', {'branch': 'main'} "Fuzzy search by directories and files
-
+Plug 'shortcuts/no-neck-pain.nvim'
 "non lua plugins
 Plug 'terryma/vim-multiple-cursors'
 "Autocompletion and LSP
@@ -53,14 +52,25 @@ nmap <space> <cmd>HopChar2<cr>
 
 
 " copilot
-let b:copilot_enabled = v:false
-ino <M-c> <cmd>let b:copilot_enabled = !b:copilot_enabled<cr>
+" let b:copilot_enabled = v:false
+" ino <M-c> <cmd>let b:copilot_enabled = !b:copilot_enabled<cr>
 
 
 lua << EOF
 
+require('copilot').setup({
+	suggestion = {
+		auto_trigger = true,
+		keymap = { accept = "<Tab>"},
+	},
+})
+
 vim.g.catppuccin_flavour = "mocha" -- latte, frappe, macchiato, mocha
-require("catppuccin").setup()
+local mocha = require("catppuccin.palettes").get_palette "mocha"
+require("catppuccin").setup {
+	highlight_overrides = { mocha = { 
+		LineNr = { fg = mocha.overlay0 }, -- make relative number more visible
+}}}
 vim.cmd [[colorscheme catppuccin]]
 
 require("lualine").setup({ options = { theme = 'catppuccin' } })
@@ -137,6 +147,7 @@ hi CocUnderline ctermbg=DarkGrey
 vmap <leader>p  <Plug>(coc-format-selected)
 nmap <leader>r  :CocCommand editor.action.organizeImport<CR>
 nmap <leader>p  :CocCommand prettier.formatFile<CR>
+nmap <leader>f  :CocCommand prettier.formatFile<CR>
 
 " Use K to show documentation in preview window.
 nnoremap <silent> H :call <SID>show_documentation()<CR>
@@ -158,10 +169,17 @@ nnoremap <C-c> :call multiple_cursors#quit()<CR>
 
 
 "move between panes
-no <C-w>j <C-w>t
 no <C-w>n <C-w>k
 no <C-w>s <C-w>l
 no <C-w>t <C-w>j
+
+no <C-w>N <C-w>K
+no <C-w>S <C-w>L
+no <C-w>T <C-w>J
+
+"map vertical navigation
+no <c-e> <c-d>
+no <c-g> <c-u>
 
 
 "eu is super weapon :)
