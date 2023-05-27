@@ -1,4 +1,4 @@
-vim.g.mapleader = ';' -- Change leader to a semicolon before plugins setup
+vim.g.mapleader = ';' --signature_help Change leader to a semicolon before plugins setup
 local function map(mode, lhs, rhs, opts)
 	local options = { noremap = true }
 	if opts then
@@ -79,19 +79,19 @@ require('lazy').setup({
 		end,
 	},
 
-	-- {
-	-- 	"zbirenbaum/copilot.lua",
-	-- 	cmd = "Copilot",
-	-- 	event = "InsertEnter",
-	-- 	config = function()
-	-- 		require('copilot').setup({
-	-- 			suggestion = {
-	-- 				auto_trigger = true,
-	-- 				keymap = { accept = "<Tab>" },
-	-- 			},
-	-- 		})
-	-- 	end,
-	-- },
+	{
+		"zbirenbaum/copilot.lua",
+		cmd = "Copilot",
+		event = "InsertEnter",
+		config = function()
+			require('copilot').setup({
+				suggestion = {
+					auto_trigger = true,
+					keymap = { accept = "<Tab>" },
+				},
+			})
+		end,
+	},
 
 	{
 		'ibhagwan/fzf-lua', -- Fuzzy search by directories and files
@@ -117,33 +117,31 @@ require('lazy').setup({
 				end,
 			},
 			{ 'williamboman/mason-lspconfig.nvim' }, -- Optional
-
 			-- Autocompletion
-			{ 'hrsh7th/cmp-path' },  -- Required
-			{ 'hrsh7th/cmp-buffer' }, -- Required
-			{ 'hrsh7th/nvim-cmp' },  -- Required
-			{ 'hrsh7th/cmp-nvim-lsp' }, -- Required
-			{ 'L3MON4D3/LuaSnip' },  -- Required
+			{ 'L3MON4D3/LuaSnip' },               -- Required
+			{ 'hrsh7th/cmp-path' },               -- Required
+			{ 'hrsh7th/cmp-buffer' },             -- Required
+			{ 'hrsh7th/nvim-cmp' },               -- Required
+			{ 'hrsh7th/cmp-nvim-lsp' },           -- Required
+			{ 'hrsh7th/cmp-nvim-lsp-signature-help' },
+
 		}
 	}
 })
 
-
-local lsp = require('lsp-zero').preset({
-	manage_nvim_cmp = {
-		set_sources = 'recommended'
-	}
-})
+-- lsp-zero settings
+local lsp = require('lsp-zero').preset({})
 lsp.on_attach(function(_, bufnr)
 	lsp.default_keymaps({
 		buffer = bufnr,
 		preserve_mappings = false,
-		omit = { 'K' },
+		omit = { 'K', '<Tab>' },
 	})
 	lsp.buffer_autoformat()
 
 	vim.keymap.set('n', 'T', vim.lsp.buf.hover, { buffer = bufnr })
 	vim.keymap.set('n', 'N', vim.lsp.buf.signature_help, { buffer = bufnr })
+	vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, { buffer = bufnr })
 end)
 
 lsp.ensure_installed({ 'tsserver', 'gopls', 'lua_ls' })
@@ -154,15 +152,22 @@ lsp.setup()
 
 local cmp = require('cmp')
 cmp.setup({
+	sources = {
+		{ name = 'nvim_lsp' },
+		{ name = 'path',                   keyword_length = 2 },
+		{ name = 'buffer',                 keyword_length = 3 },
+		{ name = 'nvim_lsp_signature_help' },
+	},
 	mapping = {
 		["<C-f>"] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item.
 		["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
 		["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
 	},
-	preselect = 'item',
-	completion = {
-		completeopt = 'menu,menuone,noinsert'
-	},
+})
+-- setup (disable) diagnostic virtual text
+vim.diagnostic.config({
+	virtual_text = false,
+	severity_sort = true,
 })
 
 -- Options
