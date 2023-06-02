@@ -1,10 +1,11 @@
 vim.g.mapleader = ';' --signature_help Change leader to a semicolon before plugins setup
+
 local function map(mode, lhs, rhs, opts)
 	local options = { noremap = true }
 	if opts then
 		options = vim.tbl_extend("force", options, opts)
 	end
-	vim.api.nvim_set_keymap(mode, lhs, rhs, options)
+	vim.keymap.set(mode, lhs, rhs, options)
 end
 
 -- Bootstrap lazy.nvim
@@ -13,7 +14,7 @@ if not vim.loop.fs_stat(lazypath) then
 	vim.fn.system({
 		"git",
 		"clone",
-		"--filter=blob:none",
+		"--filt=blob:none",
 		"https://github.com/folke/lazy.nvim.git",
 		"--branch=stable", -- latest stable release
 		lazypath,
@@ -23,6 +24,29 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Start plugins setup
 require('lazy').setup({
+	{
+		'otavioschwanck/cool-substitute.nvim',
+		config = function()
+			require('cool-substitute').setup({
+				setup_keybindings = true,
+
+				mappings = {
+					apply_substitute_and_next = 'M', -- Start sution / Go to next substitution
+					apply_substitute_and_prev = '<C-b>', -- same as M but backwards
+					terminate_substitute = '<C-c>', -- Terminate macro
+					skip_substitute = '<C-x>',      -- Skip this occurrence
+				}
+			})
+		end,
+	},
+	{
+		'michaelb/sniprun', -- run selected code in repl
+		build = 'sh ./install.sh',
+		config = function()
+			map('v', '<leader>r', '<Plug>SnipRun', { silent = true })
+			map('n', '<leader>rc', '<Plug>SnipClose', { silent = true })
+		end
+	},
 	{
 		'nvim-treesitter/nvim-treesitter',
 		build = ':TSUpdate',
@@ -97,7 +121,8 @@ require('lazy').setup({
 		'ibhagwan/fzf-lua', -- Fuzzy search by directories and files
 		config = function()
 			require('fzf-lua').setup { fzf_opts = { ['--layout'] = "default" } }
-			map('n', '<c-P>', "<cmd>lua require('fzf-lua').files({winopts = { preview = { hidden = 'hidden' }}})<CR>",
+			map('n', '<c-P>',
+				"<cmd>lua require('fzf-lua').files({winopts = { preview = { hidden = 'hidden' }}})<CR>",
 				{ silent = true })
 			map('n', '<c-F>', "<cmd>lua require('fzf-lua').grep_project()<CR>", { silent = true })
 		end,
@@ -112,9 +137,7 @@ require('lazy').setup({
 			{
 				-- Optional
 				'williamboman/mason.nvim',
-				build = function()
-					pcall(vim.cmd, 'MasonUpdate')
-				end,
+				build = ":MasonUpdate",
 			},
 			{ 'williamboman/mason-lspconfig.nvim' }, -- Optional
 			-- Autocompletion
@@ -139,6 +162,10 @@ lsp.on_attach(function(_, bufnr)
 	})
 	lsp.buffer_autoformat()
 
+	local fzf = require('fzf-lua')
+
+	map('n', 'gs', fzf.lsp_live_workspace_symbols, { buffer = bufnr })
+	map('n', 'gr', fzf.lsp_references, { buffer = bufnr })
 	vim.keymap.set('n', 'T', vim.lsp.buf.hover, { buffer = bufnr })
 	vim.keymap.set('n', 'N', vim.lsp.buf.signature_help, { buffer = bufnr })
 	vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, { buffer = bufnr })
@@ -166,7 +193,7 @@ cmp.setup({
 })
 -- setup (disable) diagnostic virtual text
 vim.diagnostic.config({
-	virtual_text = false,
+	-- virtual_text = false,
 	severity_sort = true,
 })
 
@@ -208,6 +235,7 @@ end
 
 map('i', 'eu', '<ESC>') -- escape from insert mode
 
+
 --move between panes TODO use tmux-like maping M-h for left etc?
 map('n', '<C-w>n', '<C-w>k')
 map('n', '<C-w>s', '<C-w>l')
@@ -220,11 +248,21 @@ map('n', '<C-w>T', '<C-w>J')
 
 -- my dvorak remap (attention: not all keys remaped exactly right, it's just my preferences)
 bulk_map({ 'n', 'v', 'o' },
-	{ { ',', 'w' }, { '\'', 'q' }, { '.', 'e' }, { 'p', 'r' }, { 'y', 't' }, { 'f', 'y' }, { 'g', 'u' }, { 'c', 'i' },
-		{ 'r', 'o' }, { 'l', 'p' }, { '=', ']' }, { 'a', 'a' }, { 'o', 's' }, { 'e', 'd' }, { 'u', 'f' }, { 'i', 'g' },
-		{ 'h', 'h' }, { 't', 'j' }, { 'n', 'k' }, { 's', 'l' }, { '-', '\'' }, { 'q', 'x' }, { 'j', 'c' }, { 'k', 'v' },
-		{ 'x', 'b' }, { 'b', 'n' }, { 'm', 'm' }, { 'w', ',' }, { 'v', '.' }, { 'z', '/' }, { '"', 'Q' }, { '<', 'W' },
-		{ '>', 'E' }, { 'P', 'R' }, { 'Y', 'T' }, { 'F', 'Y' }, { 'G', 'U' }, { 'C', 'I' }, { 'R', 'O' }, { 'L', 'P' },
-		{ '?', '{' }, { '+', '}' }, { 'A', 'A' }, { 'O', 'S' }, { 'E', 'D' }, { 'U', 'F' }, { 'I', 'G' }, { 'D', 'H' },
-		{ 'H', 'J' }, { 'T', 'K' }, { 'N', 'L' }, { '_', '"' }, { 'Q', 'X' }, { 'J', 'C' }, { 'K', 'V' }, { 'X', 'B' },
-		{ 'B', 'N' }, { 'W', '<' }, { 'V', '>' }, { '[', '-' }, { ']', '=' }, { '{', '_' }, { '}', '+' }, { 'ii', 'gg' } })
+	{ { ',', 'w' }, { '\'', 'q' }, { '.', 'e' }, { 'p', 'r' }, { 'y', 't' }, { 'f', 'y' }, { 'g', 'u' },
+		{ 'c', 'i' },
+		{ 'r', 'o' }, { 'l', 'p' }, { '=', ']' }, { 'a', 'a' }, { 'o', 's' }, { 'e', 'd' }, { 'u', 'f' },
+		{ 'i', 'g' },
+		{ 'h', 'h' }, { 't', 'j' }, { 'n', 'k' }, { 's', 'l' }, { '-', '\'' }, { 'q', 'x' }, { 'j', 'c' },
+		{ 'k', 'v' },
+		{ 'x', 'b' }, { 'b', 'n' }, { 'm', 'm' }, { 'w', ',' }, { 'v', '.' }, { 'z', '/' }, { '"', 'Q' },
+		{ '<', 'W' },
+		{ '>', 'E' }, { 'P', 'R' }, { 'Y', 'T' }, { 'F', 'Y' }, { 'G', 'U' }, { 'C', 'I' }, { 'R', 'O' },
+		{ 'L', 'P' },
+		{ '?', '{' }, { '+', '}' }, { 'A', 'A' }, { 'O', 'S' }, { 'E', 'D' }, { 'U', 'F' }, { 'I', 'G' },
+		{ 'D', 'H' },
+		{ 'H', 'J' }, { 'T', 'K' }, { 'N', 'L' }, { '_', '"' }, { 'Q', 'X' }, { 'J', 'C' }, { 'K', 'V' },
+		{ 'X', 'B' },
+		{ 'B', 'N' }, { 'W', '<' }, { 'V', '>' }, { '[', '-' }, { ']', '=' }, { '{', '_' }, { '}', '+' },
+		{ 'ii', 'gg' } })
+
+map('n', 'F', '<cmd>.w !pbcopy<cr><cr>') -- in normal mode copy current line
