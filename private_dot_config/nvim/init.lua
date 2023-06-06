@@ -1,3 +1,4 @@
+-- TODO incr select text object foo.bar('baz') 1: bar 2: foo.bar 3: foo.bar('baz')
 vim.g.mapleader = ';' --signature_help Change leader to a semicolon before plugins setup
 
 local function map(mode, lhs, rhs, opts)
@@ -25,19 +26,12 @@ vim.opt.rtp:prepend(lazypath)
 -- Start plugins setup
 require('lazy').setup({
 	{
-		'otavioschwanck/cool-substitute.nvim',
+		'terryma/vim-multiple-cursors',
 		config = function()
-			require('cool-substitute').setup({
-				setup_keybindings = true,
-
-				mappings = {
-					apply_substitute_and_next = 'M', -- Start sution / Go to next substitution
-					apply_substitute_and_prev = '<C-b>', -- same as M but backwards
-					terminate_substitute = '<C-c>', -- Terminate macro
-					skip_substitute = '<C-x>',      -- Skip this occurrence
-				}
-			})
-		end,
+			vim.g.multi_cursor_exit_from_insert_mode = 0
+			vim.g.multi_cursor_quit_key = '<C-c>'
+			map('n', '<C-c>', ':call multiple_cursors#quit()<CR>')
+		end
 	},
 	{
 		'michaelb/sniprun', -- run selected code in repl
@@ -52,7 +46,7 @@ require('lazy').setup({
 		build = ':TSUpdate',
 		config = function()
 			require('nvim-treesitter.configs').setup {
-				ensure_installed = { 'go', 'typescript', 'javascript', 'lua', 'vim' },
+				ensure_installed = { 'go', 'typescript', 'javascript', 'lua', 'vim', 'zig' },
 				highlight = {
 					enable = true,
 				},
@@ -169,9 +163,30 @@ lsp.on_attach(function(_, bufnr)
 	vim.keymap.set('n', 'T', vim.lsp.buf.hover, { buffer = bufnr })
 	vim.keymap.set('n', 'N', vim.lsp.buf.signature_help, { buffer = bufnr })
 	vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, { buffer = bufnr })
+
+	-- From https://github.com/neovim/nvim-lspconfig/issues/115#issuecomment-1130373799
+	vim.api.nvim_create_autocmd("BufWritePre", {
+		pattern = { "*.go" },
+		callback = function()
+			local params = vim.lsp.util.make_range_params(nil, vim.lsp.util._get_offset_encoding())
+			params.context = { only = { "source.organizeImports" } }
+
+			local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, 3000)
+			for _, res in pairs(result or {}) do
+				for _, r in pairs(res.result or {}) do
+					if r.edit then
+						vim.lsp.util.apply_workspace_edit(r.edit,
+							vim.lsp.util._get_offset_encoding())
+					else
+						vim.lsp.buf.execute_command(r.command)
+					end
+				end
+			end
+		end,
+	})
 end)
 
-lsp.ensure_installed({ 'tsserver', 'gopls', 'lua_ls' })
+lsp.ensure_installed({ 'tsserver', 'gopls', 'lua_ls', 'zls' })
 -- (Optional) Configure lua language server for neovim
 require('lspconfig').lua_ls.setup(lsp.nvim_lua_ls())
 
