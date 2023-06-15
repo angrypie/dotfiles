@@ -25,7 +25,8 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Start plugins setup
 require('lazy').setup({
-	-- { dir = "/Users/el/Code/github.com/angrypie/moonwalk.nvim", },
+	{ "folke/neodev.nvim",     opts = {} }, -- Configure lsp, docs for lua neovim api (plugin dev and init.lua).
+	-- { dir = "/Users/el/Code/github.com/angrypie/moonwalk.nvim" },
 	{
 		'stevearc/oil.nvim', -- edit directory as a regular buffer
 		config = function()
