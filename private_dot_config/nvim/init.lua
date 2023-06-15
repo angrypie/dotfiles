@@ -25,6 +25,13 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Start plugins setup
 require('lazy').setup({
+	-- { dir = "/Users/el/Code/github.com/angrypie/moonwalk.nvim", },
+	{
+		'stevearc/oil.nvim', -- edit directory as a regular buffer
+		config = function()
+			require('oil').setup()
+		end,
+	},
 	{
 		'terryma/vim-multiple-cursors',
 		config = function()
@@ -119,6 +126,7 @@ require('lazy').setup({
 				"<cmd>lua require('fzf-lua').files({winopts = { preview = { hidden = 'hidden' }}})<CR>",
 				{ silent = true })
 			map('n', '<c-F>', "<cmd>lua require('fzf-lua').grep_project()<CR>", { silent = true })
+			map('n', ';ht', "<cmd>lua require('fzf-lua').help_tags()<CR>", { silent = true })
 		end,
 	},
 
