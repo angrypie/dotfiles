@@ -25,7 +25,7 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Start plugins setup
 require('lazy').setup({
-	{ "folke/neodev.nvim",     opts = {} }, -- Configure lsp, docs for lua neovim api (plugin dev and init.lua).
+	{ "folke/neodev.nvim",     opts = {} }, -- Configure lsp and docs for lua neovim api (plugin dev and init.lua).
 	-- { dir = "/Users/el/Code/github.com/angrypie/moonwalk.nvim" },
 	{
 		'stevearc/oil.nvim', -- edit directory as a regular buffer
@@ -54,7 +54,7 @@ require('lazy').setup({
 		build = ':TSUpdate',
 		config = function()
 			require('nvim-treesitter.configs').setup {
-				ensure_installed = { 'go', 'typescript', 'javascript', 'lua', 'vim', 'zig' },
+				ensure_installed = { 'go', 'typescript', 'javascript', 'lua', 'vim', 'zig', "c", 'rust' },
 				highlight = {
 					enable = true,
 				},
@@ -167,7 +167,8 @@ lsp.on_attach(function(_, bufnr)
 
 	local fzf = require('fzf-lua')
 
-	map('n', 'gs', fzf.lsp_live_workspace_symbols, { buffer = bufnr })
+	map('n', 'gs', fzf.lsp_workspace_symbols, { buffer = bufnr })
+	map('n', 'gS', fzf.lsp_document_symbols, { buffer = bufnr })
 	map('n', 'gr', fzf.lsp_references, { buffer = bufnr })
 	vim.keymap.set('n', 'T', vim.lsp.buf.hover, { buffer = bufnr })
 	vim.keymap.set('n', 'N', vim.lsp.buf.signature_help, { buffer = bufnr })
@@ -195,7 +196,7 @@ lsp.on_attach(function(_, bufnr)
 	})
 end)
 
-lsp.ensure_installed({ 'tsserver', 'gopls', 'lua_ls', 'zls' })
+lsp.ensure_installed({ 'tsserver', 'gopls', 'lua_ls', 'zls', 'rust_analyzer' })
 -- (Optional) Configure lua language server for neovim
 require('lspconfig').lua_ls.setup(lsp.nvim_lua_ls())
 
@@ -242,7 +243,7 @@ opt.tabstop = 2           -- 1 tab == 4 spaces
 opt.softtabstop = 2       -- display 1 tab as 2 spaces
 opt.smartindent = true    -- Autoindent new lines
 -- Perfomance
-opt.synmaxcol = 300       -- Maximum column numbers for syntax to highlight
+-- opt.synmaxcol = 300       -- Maximum column numbers for syntax to highlight
 opt.updatetime = 700
 
 opt.shortmess:append "sI" -- Disable nvim intro
@@ -290,3 +291,5 @@ bulk_map({ 'n', 'v', 'o' },
 		{ 'ii', 'gg' } })
 
 map('n', 'F', '<cmd>.w !pbcopy<cr><cr>') -- in normal mode copy current line
+-- compy multiple lines with pbcopy
+map('v', 'F', '<cmd>.w !pbcopy<cr><cr>')
