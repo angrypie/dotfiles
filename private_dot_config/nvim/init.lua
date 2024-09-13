@@ -25,6 +25,36 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Start plugins setup
 require('lazy').setup({
+	{
+		"mfussenegger/nvim-lint",
+		event = { "BufWritePost", "BufReadPost", "InsertLeave" },
+		config = function()
+			local lint = require("lint")
+			lint.linters_by_ft = {
+				typescript = { "eslint_d" },
+				javascript = { "eslint_d" },
+				typescriptreact = { "eslint_d" },
+				javascriptreact = { "eslint_d" },
+			}
+
+			vim.api.nvim_create_autocmd({ "BufWritePost", "BufEnter", "InsertLeave" }, {
+				callback = function()
+					lint.try_lint()
+				end,
+			})
+		end,
+	},
+	-- {
+	-- 	"sourcegraph/sg.nvim",
+	-- 	dependencies = { "nvim-lua/plenary.nvim", --[[ "nvim-telescope/telescope.nvim ]] },
+
+	-- 	-- If you have a recent version of lazy.nvim, you don't need to add this!
+	-- 	build = "nvim -l build/init.lua",
+	-- 	config = function()
+	-- 		require("sg").setup({})
+	-- 	end
+	-- },
+	-- TODO neodev is EOL, replace it with https://github.com/folke/lazydev.nvim
 	{ "folke/neodev.nvim",     opts = {} }, -- Configure lsp and docs for lua neovim api (plugin dev and init.lua).
 	-- { dir = "/Users/el/Code/github.com/angrypie/moonwalk.nvim" },
 	{
@@ -85,14 +115,11 @@ require('lazy').setup({
 	{ 'windwp/nvim-autopairs', config = true }, -- autopairs lua plugin
 
 	{
-		'b3nj5m1n/kommentary', -- Commenting plugin
-		config = function()
-			require('kommentary.config').configure_language("default", {
-				prefer_single_line_comments = true,
-			})
-			map("n", "/", "<Plug>kommentary_line_default", {})
-			map("v", "/", "<Plug>kommentary_visual_default<C-c>", {})
-		end,
+		'numToStr/Comment.nvim', -- commenting plugin
+		opts = {
+			toggler = { line = '/', },
+			opleader = { line = '/', },
+		}
 	},
 
 	{
@@ -106,18 +133,25 @@ require('lazy').setup({
 	},
 
 	{
-		"zbirenbaum/copilot.lua",
-		cmd = "Copilot",
-		event = "InsertEnter",
+		"supermaven-inc/supermaven-nvim",
 		config = function()
-			require('copilot').setup({
-				suggestion = {
-					auto_trigger = true,
-					keymap = { accept = "<Tab>" },
-				},
-			})
+			require("supermaven-nvim").setup({})
 		end,
 	},
+
+	-- {
+	-- 	"zbirenbaum/copilot.lua",
+	-- 	cmd = "Copilot",
+	-- 	event = "InsertEnter",
+	-- 	config = function()
+	-- 		require('copilot').setup({
+	-- 			suggestion = {
+	-- 				auto_trigger = true,
+	-- 				keymap = { accept = "<Tab>" },
+	-- 			},
+	-- 		})
+	-- 	end,
+	-- },
 
 	{
 		'ibhagwan/fzf-lua', -- Fuzzy search by directories and files
@@ -128,6 +162,7 @@ require('lazy').setup({
 				{ silent = true })
 			map('n', '<c-F>', "<cmd>lua require('fzf-lua').grep_project()<CR>", { silent = true })
 			map('n', ';ht', "<cmd>lua require('fzf-lua').help_tags()<CR>", { silent = true })
+			map('n', ';km', "<cmd>lua require('fzf-lua').keymaps()<CR>", { silent = true })
 		end,
 	},
 
@@ -178,7 +213,7 @@ lsp.on_attach(function(_, bufnr)
 	vim.api.nvim_create_autocmd("BufWritePre", {
 		pattern = { "*.go" },
 		callback = function()
-			local params = vim.lsp.util.make_range_params(nil, vim.lsp.util._get_offset_encoding())
+			local params = vim.lsp.util.make_range_params(nil, vim.lsp.util._get_offset_encoding(bufnr))
 			params.context = { only = { "source.organizeImports" } }
 
 			local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, 3000)
@@ -186,7 +221,7 @@ lsp.on_attach(function(_, bufnr)
 				for _, r in pairs(res.result or {}) do
 					if r.edit then
 						vim.lsp.util.apply_workspace_edit(r.edit,
-							vim.lsp.util._get_offset_encoding())
+							vim.lsp.util._get_offset_encoding(bufnr))
 					else
 						vim.lsp.buf.execute_command(r.command)
 					end
@@ -196,7 +231,7 @@ lsp.on_attach(function(_, bufnr)
 	})
 end)
 
-lsp.ensure_installed({ 'tsserver', 'gopls', 'lua_ls', 'zls', 'rust_analyzer' })
+lsp.ensure_installed({ 'ts_ls', 'gopls', 'lua_ls', 'zls', 'rust_analyzer' })
 -- (Optional) Configure lua language server for neovim
 require('lspconfig').lua_ls.setup(lsp.nvim_lua_ls())
 
@@ -205,6 +240,7 @@ lsp.setup()
 local cmp = require('cmp')
 cmp.setup({
 	sources = {
+		{ name = "cody" },
 		{ name = 'nvim_lsp' },
 		{ name = 'path',                   keyword_length = 2 },
 		{ name = 'buffer',                 keyword_length = 3 },
@@ -216,6 +252,7 @@ cmp.setup({
 		["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
 	},
 })
+
 -- setup (disable) diagnostic virtual text
 vim.diagnostic.config({
 	-- virtual_text = false,
