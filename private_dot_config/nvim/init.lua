@@ -26,34 +26,41 @@ vim.opt.rtp:prepend(lazypath)
 -- Start plugins setup
 require('lazy').setup({
 	{
+		"karb94/neoscroll.nvim",
+		config = function()
+			require('neoscroll').setup({
+				-- Keys to be mapped to their corresponding default scrolling animation
+				mappings = { '<C-u>', '<C-d>', }
+			})
+		end
+	},
+	{
+		'Wansmer/treesj',
+		keys = { '<leader><space>m', '<leader><space>j', '<leader><space>s' },
+		dependencies = { 'nvim-treesitter/nvim-treesitter' }, -- if you install parsers with `nvim-treesitter`
+		config = function()
+			require('treesj').setup({})
+		end,
+	},
+	{
 		"mfussenegger/nvim-lint",
 		event = { "BufWritePost", "BufReadPost", "InsertLeave" },
 		config = function()
 			local lint = require("lint")
-			lint.linters_by_ft = {
-				typescript = { "eslint_d" },
-				javascript = { "eslint_d" },
-				typescriptreact = { "eslint_d" },
-				javascriptreact = { "eslint_d" },
-			}
-
-			vim.api.nvim_create_autocmd({ "BufWritePost", "BufEnter", "InsertLeave" }, {
-				callback = function()
-					lint.try_lint()
-				end,
-			})
+			-- lint.linters_by_ft = {
+			-- 	typescript = { "eslint_d" },
+			-- 	javascript = { "eslint_d" },
+			-- 	typescriptreact = { "eslint_d" },
+			-- 	javascriptreact = { "eslint_d" },
+			-- }
+			--
+			-- vim.api.nvim_create_autocmd({ "BufWritePost", "BufEnter", "InsertLeave" }, {
+			-- 	callback = function()
+			-- 		lint.try_lint()
+			-- 	end,
+			-- })
 		end,
 	},
-	-- {
-	-- 	"sourcegraph/sg.nvim",
-	-- 	dependencies = { "nvim-lua/plenary.nvim", --[[ "nvim-telescope/telescope.nvim ]] },
-
-	-- 	-- If you have a recent version of lazy.nvim, you don't need to add this!
-	-- 	build = "nvim -l build/init.lua",
-	-- 	config = function()
-	-- 		require("sg").setup({})
-	-- 	end
-	-- },
 	-- TODO neodev is EOL, replace it with https://github.com/folke/lazydev.nvim
 	{ "folke/neodev.nvim",     opts = {} }, -- Configure lsp and docs for lua neovim api (plugin dev and init.lua).
 	-- { dir = "/Users/el/Code/github.com/angrypie/moonwalk.nvim" },
@@ -64,11 +71,26 @@ require('lazy').setup({
 		end,
 	},
 	{
-		'terryma/vim-multiple-cursors',
+		"jake-stewart/multicursor.nvim",
+		branch = "1.0",
 		config = function()
-			vim.g.multi_cursor_exit_from_insert_mode = 0
-			vim.g.multi_cursor_quit_key = '<C-c>'
-			map('n', '<C-c>', ':call multiple_cursors#quit()<CR>')
+			local mc = require("multicursor-nvim")
+			mc.setup()
+			local set = vim.keymap.set
+
+			set({ "n", "v" }, "<C-n>", function() mc.matchAddCursor(1) end)
+			set({ "n", "v" }, "<leader>A", mc.matchAllAddCursors)
+			set({ "n", "v" }, "<leader>x", mc.deleteCursor)
+
+			set("n", "<C-c>", function()
+				if not mc.cursorsEnabled() then
+					mc.enableCursors()
+				elseif mc.hasCursors() then
+					mc.clearCursors()
+				else
+					-- Default <esc> handler.
+				end
+			end)
 		end
 	},
 	{
@@ -84,7 +106,7 @@ require('lazy').setup({
 		build = ':TSUpdate',
 		config = function()
 			require('nvim-treesitter.configs').setup {
-				ensure_installed = { 'go', 'typescript', 'javascript', 'lua', 'vim', 'zig', "c", 'rust' },
+				ensure_installed = { 'go', 'typescript', 'tsx', 'javascript', 'lua', 'vim', 'zig', "c", 'rust' },
 				highlight = {
 					enable = true,
 				},
@@ -126,7 +148,6 @@ require('lazy').setup({
 		'phaazon/hop.nvim', -- Easy-motion like file navigation
 		config = function()
 			require 'hop'.setup()
-			map('n', '<leader>s', '<cmd>HopWord<cr>') -- hop to start of the all words
 			map('n', '<space>', '<cmd>HopChar2<cr>') -- experimental, on downside <space> can't be <leader> now
 			vim.cmd [[hi HopNextKey2 guifg=#00dfff]] -- second character same color as first one
 		end,
@@ -138,19 +159,17 @@ require('lazy').setup({
 			require("supermaven-nvim").setup({})
 		end,
 	},
-
 	-- {
-	-- 	"zbirenbaum/copilot.lua",
-	-- 	cmd = "Copilot",
-	-- 	event = "InsertEnter",
+	-- 	'Exafunction/codeium.vim',
 	-- 	config = function()
-	-- 		require('copilot').setup({
-	-- 			suggestion = {
-	-- 				auto_trigger = true,
-	-- 				keymap = { accept = "<Tab>" },
-	-- 			},
-	-- 		})
-	-- 	end,
+	-- 		-- Change '<C-g>' here to any keycode you like.
+	-- 		-- vim.keymap.set('i', '<C-g>', function() return vim.fn['codeium#Accept']() end, { expr = true, silent = true })
+	-- 		-- vim.keymap.set('i', '<c-;>', function() return vim.fn['codeium#CycleCompletions'](1) end,
+	-- 		-- 	{ expr = true, silent = true })
+	-- 		-- vim.keymap.set('i', '<c-,>', function() return vim.fn['codeium#CycleCompletions'](-1) end,
+	-- 		-- 	{ expr = true, silent = true })
+	-- 		-- vim.keymap.set('i', '<c-x>', function() return vim.fn['codeium#Clear']() end, { expr = true, silent = true })
+	-- 	end
 	-- },
 
 	{
@@ -190,6 +209,7 @@ require('lazy').setup({
 	}
 })
 
+
 -- lsp-zero settings
 local lsp = require('lsp-zero').preset({})
 lsp.on_attach(function(_, bufnr)
@@ -198,7 +218,8 @@ lsp.on_attach(function(_, bufnr)
 		preserve_mappings = false,
 		omit = { 'K', '<Tab>' },
 	})
-	lsp.buffer_autoformat()
+
+
 
 	local fzf = require('fzf-lua')
 
@@ -231,16 +252,27 @@ lsp.on_attach(function(_, bufnr)
 	})
 end)
 
-lsp.ensure_installed({ 'ts_ls', 'gopls', 'lua_ls', 'zls', 'rust_analyzer' })
+lsp.format_on_save({
+	format_opts = {
+		async = false,
+		timeout_ms = 1000,
+	},
+	servers = {
+		['lua_ls'] = { 'lua' },
+		['biome'] = { 'javascript', 'typescript', 'typescriptreact', 'javascriptreact', 'json' },
+	}
+})
+
+lsp.ensure_installed({ 'ts_ls', 'gopls', 'lua_ls', 'zls', 'rust_analyzer', 'biome' })
 -- (Optional) Configure lua language server for neovim
 require('lspconfig').lua_ls.setup(lsp.nvim_lua_ls())
+require('lspconfig').biome.setup({})
 
 lsp.setup()
 
 local cmp = require('cmp')
 cmp.setup({
 	sources = {
-		{ name = "cody" },
 		{ name = 'nvim_lsp' },
 		{ name = 'path',                   keyword_length = 2 },
 		{ name = 'buffer',                 keyword_length = 3 },
