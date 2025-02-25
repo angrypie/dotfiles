@@ -16,6 +16,11 @@ Install brew
 
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
+Install Atuin (shell history)
+
+    curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
+
+
 Install cli tools
 
     brew intall tmux fish fzf ripgrep fd bat scc bob
