@@ -1,4 +1,4 @@
-vim.g.mapleader = ';' -- Change leader to a semicolon before plugins setup
+vim.g.mapleader = " " -- Change leader to a <space> before plugins setup
 
 local function map(mode, lhs, rhs, opts)
 	local options = { noremap = true }
@@ -27,221 +27,285 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Start plugins setup
 require('lazy').setup({
-	---@module 'snacks'
-	{
-		"folke/snacks.nvim",
-		priority = 1000,
-		lazy = false,
-		---@type snacks.Config
-		opts = {
-			lazygit = { enabled = true, },
-			picker = {
-				enabled = true,
-				sources = {
-					files = { hidden = true },
+		{
+			'brenoprata10/nvim-highlight-colors',
+			config = function()
+				require('nvim-highlight-colors').setup({})
+			end
+		},
+		{
+			'michaelb/sniprun', -- run selected code in repl
+			build = 'sh ./install.sh',
+			config = function()
+				map('v', '<leader>r', '<Plug>SnipRun', { silent = true })
+				map('n', '<leader>rc', '<Plug>SnipClose', { silent = true })
+			end
+		},
+		{
+			"folke/todo-comments.nvim",
+			dependencies = { "nvim-lua/plenary.nvim" },
+			opts = {
+				keywords = {
+					FIXMINE = { icon = " ", color = "comment", alt = { "FIXMINE", "TODO" }, },
 				},
-				layout = {
-					preset = "telescope",
-					preview = false,
-				}
+				colors = { comment = { "Comment", "#000000" }, },
+				highlight = { multiline = false, pattern = [[.*<(KEYWORDS)\s*: angrypie]], },
 			}
 		},
-		keys = {
-			{ "<c-y>",      function() Snacks.picker.files() end, desc = "Find Files" },
-			{ "<leader>lg", function() Snacks.lazygit() end,      desc = "LazyGit" },
-		}
-	},
-	{
-		"dlants/magenta.nvim",
-		lazy = true, -- you could also bind to <leader>mt
-		build = "npm install --frozen-lockfile",
-		keys = {
-			{ "<leader>mt", "<cmd>Magenta toggle<cr>", desc = "Magenta" },
-		},
-		opts = {},
-	},
-	{
-		"karb94/neoscroll.nvim",
-		config = function()
-			require('neoscroll').setup({
-				-- Keys to be mapped to their corresponding default scrolling animation
-				mappings = { '<C-u>', '<C-d>', }
-			})
-		end
-	},
-	{
-		'Wansmer/treesj',
-		keys = { '<leader><space>m', '<leader><space>j', '<leader><space>s' },
-		dependencies = { 'nvim-treesitter/nvim-treesitter' }, -- if you install parsers with `nvim-treesitter`
-		config = function()
-			require('treesj').setup({})
-		end,
-	},
-	{
-		"folke/lazydev.nvim",
-		ft = "lua", -- only load on lua files
-		opts = {
-			library = {
-				-- See the configuration section for more details
-				-- Load luvit types when the `vim.uv` word is found
-				{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
-			},
-		},
-	},
-	-- { dir = "/Users/el/Code/github.com/angrypie/moonwalk.nvim" },
-	{
-		'stevearc/oil.nvim', -- Edit directory as a regular buffer
-		config = function()
-			require('oil').setup()
-		end,
-	},
-	{
-		"jake-stewart/multicursor.nvim",
-		branch = "1.0",
-		config = function()
-			local mc = require("multicursor-nvim")
-			mc.setup()
-			local set = vim.keymap.set
-
-			set({ "n", "v" }, "<C-n>", function() mc.matchAddCursor(1) end)
-			set({ "n", "v" }, "<leader>A", mc.matchAllAddCursors)
-			set({ "n", "v" }, "<leader>x", mc.deleteCursor)
-
-			set("n", "<C-c>", function()
-				if not mc.cursorsEnabled() then
-					mc.enableCursors()
-				elseif mc.hasCursors() then
-					mc.clearCursors()
-				else
-					-- Default <esc> handler.
-				end
-			end)
-		end
-	},
-	{
-		'nvim-treesitter/nvim-treesitter',
-		build = ':TSUpdate',
-		config = function()
-			require('nvim-treesitter.configs').setup({
-				incremental_selection = {
-					enable = true,
-					keymaps = {
-						init_selection = false,
-						node_incremental = "k",
-						scope_incremental = "<tab>",
-						node_decremental = "m",
+		---@module 'snacks'
+		{
+			"folke/snacks.nvim",
+			priority = 1000,
+			lazy = false,
+			---@type snacks.Config
+			opts = {
+				debug = { enabled = true },
+				gitbrowser = { enabled = true },
+				-- notifier = { enabled = true },
+				lazygit = { enabled = true, },
+				picker = {
+					enabled = true,
+					sources = {
+						files = { hidden = true },
 					},
-				},
-				ensure_installed = {
-					'go', 'typescript', 'tsx', 'javascript', 'lua', 'vim', 'zig', "c", 'rust',
-				},
-				sync_install = false,
-				auto_install = false,
-				ignore_install = {},
-				modules = {},
-				highlight = {
-					enable = true,
-				},
-			})
-		end,
-	},
-
-	{
-		'catppuccin/nvim',
-		name = 'catppuccin',
-		config = function()
-			vim.g.catppuccin_flavour = "mocha"
-			local mocha = require("catppuccin.palettes").get_palette "mocha"
-			require("catppuccin").setup {
-				highlight_overrides = { mocha = { LineNr = { fg = mocha.overlay0 } } }
-			} -- make relative number more visible
-			vim.cmd [[colorscheme catppuccin]]
-		end,
-	},
-
-	{
-		'nvim-lualine/lualine.nvim',
-		dependencies = { 'nvim-tree/nvim-web-devicons' },
-		config = function()
-			require('lualine').setup {
-				options = {
-					theme = 'auto',
-				},
-			}
-		end,
-	},
-
-	{ 'windwp/nvim-autopairs', config = true },
-
-	{
-		'numToStr/Comment.nvim', -- commenting plugin
-		opts = {
-			toggler = { line = '/', },
-			opleader = { line = '/', },
-		}
-	},
-
-	{
-		'phaazon/hop.nvim', -- Easy-motion like file navigation
-		config = function()
-			require 'hop'.setup()
-			map('n', '<space>', '<cmd>HopChar2<cr>') -- experimental, on downside <space> can't be <leader> now
-			vim.cmd [[hi HopNextKey2 guifg=#00dfff]] -- Second character same color as first one
-		end,
-	},
-
-	{
-		"supermaven-inc/supermaven-nvim",
-		config = function()
-			require("supermaven-nvim").setup({})
-		end,
-	},
-
-	{
-		'ibhagwan/fzf-lua', -- Fuzzy search by directories and files
-		config = function()
-			require('fzf-lua').setup { fzf_opts = { ['--layout'] = "default" } }
-			require("fzf-lua").register_ui_select()
-			map('n', '<c-P>',
-				"<cmd>lua require('fzf-lua').files({winopts = { preview = { hidden = 'hidden' }}})<CR>",
-				{ silent = true })
-			map('n', '<c-F>', "<cmd>lua require('fzf-lua').grep_project()<CR>", { silent = true })
-			map('n', ';ht', "<cmd>lua require('fzf-lua').help_tags()<CR>", { silent = true })
-			map('n', ';km', "<cmd>lua require('fzf-lua').keymaps()<CR>", { silent = true })
-		end,
-	},
-	{ -- optional cmp completion source for require statements and module annotations
-		"hrsh7th/nvim-cmp",
-		opts = function(_, opts)
-			opts.sources = opts.sources or {}
-			table.insert(opts.sources, {
-				name = "lazydev",
-				group_index = 0, -- set group index to 0 to skip loading LuaLS completions
-			})
-		end,
-	},
-	{
-		'VonHeikemen/lsp-zero.nvim',
-		branch = 'v2.x',
-		dependencies = {
-			-- LSP Support
-			{ 'neovim/nvim-lspconfig' }, -- Required
-			{
-				-- Optional
-				'williamboman/mason.nvim',
-				build = ":MasonUpdate",
+					layout = {
+						cycle = true,
+						preset = function()
+							return vim.o.columns >= 120 and "default" or "vertical"
+						end,
+					},
+				}
 			},
-			{ 'williamboman/mason-lspconfig.nvim' }, -- Optional
-			{ 'L3MON4D3/LuaSnip' },               -- Required
-			{ 'hrsh7th/cmp-path' },               -- Required
-			{ 'hrsh7th/cmp-buffer' },             -- Required
-			{ 'hrsh7th/nvim-cmp' },               -- Required
-			{ 'hrsh7th/cmp-nvim-lsp' },           -- Required
-			{ 'hrsh7th/cmp-nvim-lsp-signature-help' },
+			dependencies = {
+				{
+					"folke/todo-comments.nvim",
+					optional = true,
+					keys = {
+						{ "<leader>st", function() Snacks.picker.todo_comments() end,                             desc = "Todo" },
+						{ "<leader>sT", function() Snacks.picker.todo_comments({ keywords = { "FIXMINE" } }) end, desc = "Search for mine tags" },
+					},
+				}
+			},
+			keys = {
+				{ "<leader>lg",  function() Snacks.lazygit() end,              desc = "LazyGit" },
+				{ "<leader>go",  function() Snacks.gitbrowse.open() end,       desc = "Get Browse" },
+				{ "<leader>no",  function() Snacks.picker.notifications() end, desc = "Notification History" },
+				{ "<leader>rec", function() Snacks.picker.recent() end,        desc = "Recent files" },
+			}
+		},
+		{
+			"dlants/magenta.nvim",
+			dev = true,
+			lazy = false, -- you could also bind to <leader>mt
+			build = "npm install --frozen-lockfile",
+			keys = {
+				{ "<leader>mt", "<cmd>Magenta toggle<cr>", desc = "Magenta" },
+			},
+			config = function()
+				require("magenta").setup({
+					provider = "anthropic",
+					openai = {
+						model = "gpt-4o",
+					},
+					mistral = {
+						-- model = "codestral-latest",
+						model = "mistral-large-latest",
+					},
+				})
+			end,
+		},
+		{
+			"karb94/neoscroll.nvim",
+			config = function()
+				require('neoscroll').setup({
+					-- Keys to be mapped to their corresponding default scrolling animation
+					mappings = { '<C-u>', '<C-d>', }
+				})
+			end
+		},
+		{
+			'Wansmer/treesj',
+			keys = { '<leader><space>m', '<leader><space>j', '<leader><space>s' },
+			dependencies = { 'nvim-treesitter/nvim-treesitter' }, -- if you install parsers with `nvim-treesitter`
+			config = function()
+				require('treesj').setup({})
+			end,
+		},
+		{
+			"folke/lazydev.nvim",
+			ft = "lua", -- only load on lua files
+			opts = {
+				library = {
+					-- See the configuration section for more details
+					-- Load luvit types when the `vim.uv` word is found
+					{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
+				},
+			},
+		},
+		-- { dir = "/Users/el/Code/github.com/angrypie/moonwalk.nvim" },
+		{
+			'stevearc/oil.nvim', -- Edit directory as a regular buffer
+			config = function()
+				require('oil').setup()
+			end,
+		},
+		{
+			"jake-stewart/multicursor.nvim",
+			branch = "1.0",
+			config = function()
+				local mc = require("multicursor-nvim")
+				mc.setup()
+				local set = vim.keymap.set
 
+				set({ "n", "v" }, "<C-n>", function() mc.matchAddCursor(1) end)
+				set({ "n", "v" }, "<leader>A", mc.matchAllAddCursors)
+				set({ "n", "v" }, "<leader>x", mc.deleteCursor)
+
+				set("n", "<C-c>", function()
+					if not mc.cursorsEnabled() then
+						mc.enableCursors()
+					elseif mc.hasCursors() then
+						mc.clearCursors()
+					else
+						-- Default <esc> handler.
+					end
+				end)
+			end
+		},
+		{
+			'nvim-treesitter/nvim-treesitter',
+			build = ':TSUpdate',
+			config = function()
+				require('nvim-treesitter.configs').setup({
+					incremental_selection = {
+						enable = true,
+						keymaps = {
+							init_selection = false,
+							node_incremental = "k",
+							scope_incremental = "<tab>",
+							node_decremental = "m",
+						},
+					},
+					ensure_installed = {
+						'go', 'typescript', 'tsx', 'javascript', 'lua', 'vim', 'zig', "c", 'rust',
+					},
+					sync_install = false,
+					auto_install = false,
+					ignore_install = {},
+					modules = {},
+					highlight = {
+						enable = true,
+					},
+				})
+			end,
+		},
+
+		{
+			'catppuccin/nvim',
+			name = 'catppuccin',
+			config = function()
+				vim.g.catppuccin_flavour = "mocha"
+				local mocha = require("catppuccin.palettes").get_palette "mocha"
+				require("catppuccin").setup {
+					highlight_overrides = { mocha = { LineNr = { fg = mocha.overlay0 } } }
+				} -- make relative number more visible
+				vim.cmd [[colorscheme catppuccin]]
+			end,
+		},
+
+		{
+			'nvim-lualine/lualine.nvim',
+			dependencies = { 'nvim-tree/nvim-web-devicons' },
+			config = function()
+				require('lualine').setup {
+					options = {
+						theme = 'auto',
+					},
+				}
+			end,
+		},
+
+		{ 'windwp/nvim-autopairs', config = true },
+
+		{
+			'numToStr/Comment.nvim', -- commenting plugin
+			opts = {
+				toggler = { line = '/', },
+				opleader = { line = '/', },
+			}
+		},
+
+		{
+			'phaazon/hop.nvim', -- Easy-motion like file navigation
+			config = function()
+				require 'hop'.setup()
+				map('n', ';', '<cmd>HopChar2<cr>')   -- experimental
+				vim.cmd [[hi HopNextKey2 guifg=#00dfff]] -- Second character same color as first one
+			end,
+		},
+
+		{
+			"supermaven-inc/supermaven-nvim",
+			config = function()
+				require("supermaven-nvim").setup({})
+			end,
+		},
+
+		{
+			'ibhagwan/fzf-lua', -- Fuzzy search by directories and files
+			config = function()
+				require('fzf-lua').setup { fzf_opts = { ['--layout'] = "default" } }
+				require("fzf-lua").register_ui_select()
+				-- search in  .config dir
+				local fzf = require('fzf-lua')
+				vim.keymap.set('n', '<leader>fc', function() fzf.files({ cwd = '~/.config' }) end)
+				vim.keymap.set('n', '<c-p>', function() fzf.files({ winopts = { preview = { hidden = 'hidden' } } }) end)
+				vim.keymap.set('n', '<c-F>', function() fzf.grep_project() end)
+				vim.keymap.set('n', ';ht', function() fzf.help_tags() end, { silent = true })
+				vim.keymap.set('n', ';km', function() fzf.keymaps() end, { silent = true })
+				-- use keymap.set
+			end,
+		},
+		{ -- optional cmp completion source for require statements and module annotations
+			"hrsh7th/nvim-cmp",
+			opts = function(_, opts)
+				opts.sources = opts.sources or {}
+				table.insert(opts.sources, {
+					name = "lazydev",
+					group_index = 0, -- set group index to 0 to skip loading LuaLS completions
+				})
+			end,
+		},
+		{
+			'VonHeikemen/lsp-zero.nvim',
+			branch = 'v2.x',
+			dependencies = {
+				-- LSP Support
+				{ 'neovim/nvim-lspconfig' }, -- Required
+				{
+					-- Optional
+					'williamboman/mason.nvim',
+					build = ":MasonUpdate",
+				},
+				{ 'williamboman/mason-lspconfig.nvim' }, -- Optional
+				{ 'L3MON4D3/LuaSnip' },              -- Required
+				{ 'hrsh7th/cmp-path' },              -- Required
+				{ 'hrsh7th/cmp-buffer' },            -- Required
+				{ 'hrsh7th/nvim-cmp' },              -- Required
+				{ 'hrsh7th/cmp-nvim-lsp' },          -- Required
+				{ 'hrsh7th/cmp-nvim-lsp-signature-help' },
+
+			}
 		}
-	}
-})
+	},
+	-- lazy.nvim opts
+	vim.tbl_deep_extend('force', require('lazy.core.config').defaults, {
+		dev = {
+			path = "~/Code/github.com" -- load plugins with { dev: true } from this path
+		}
+	})
+)
+
 
 
 -- lsp-zero settings
@@ -295,11 +359,12 @@ lsp.format_on_save({
 	servers = {
 		['lua_ls'] = { 'lua' },
 		['biome'] = { 'javascript', 'typescript', 'typescriptreact', 'javascriptreact', 'json' },
+
 	}
 })
 
 lsp.ensure_installed({
-	'ts_ls', 'gopls', 'lua_ls', 'zls', 'rust_analyzer', 'biome',
+	'ts_ls', 'gopls', 'lua_ls', 'zls', 'rust_analyzer', 'biome', 'eslint',
 })
 -- (Optional) Configure lua language server for neovim
 require('lspconfig').lua_ls.setup(lsp.nvim_lua_ls())
@@ -320,12 +385,13 @@ cmp.setup({
 		["<C-f>"] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item.
 		["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
 		["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
+
 	},
 })
 
 -- setup (disable) diagnostic virtual text
 vim.diagnostic.config({
-	-- virtual_text = false,
+	virtual_text = true,
 	severity_sort = true,
 })
 
@@ -365,7 +431,6 @@ local function bulk_map(modes, rules)
 end
 
 map('i', 'eu', '<ESC>') -- escape from insert mode
-
 
 -- Move between panes TODO use tmux like mappings M-h for left etc?
 map('n', '<C-w>n', '<C-w>k')

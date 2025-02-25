@@ -5,9 +5,9 @@
 # Init fisher first
 #
 if not functions -q fisher
-    set -q XDG_CONFIG_HOME; or set XDG_CONFIG_HOME ~/.config
-    curl https://git.io/fisher --create-dirs -sLo $XDG_CONFIG_HOME/fish/functions/fisher.fish
-    fish -c fisher
+	set -q XDG_CONFIG_HOME; or set XDG_CONFIG_HOME ~/.config
+	curl https://git.io/fisher --create-dirs -sLo $XDG_CONFIG_HOME/fish/functions/fisher.fish
+	fish -c fisher
 end
 
 # fish auto expand command n to nvim
@@ -41,3 +41,9 @@ set --export PATH $BUN_INSTALL/bin $PATH
 
 # Added by Windsurf
 fish_add_path /Users/el/.codeium/windsurf/bin
+
+# atuin initialization
+atuin init fish | source
+
+# Added by LM Studio CLI (lms)
+set -gx PATH $PATH /Users/el/.lmstudio/bin
