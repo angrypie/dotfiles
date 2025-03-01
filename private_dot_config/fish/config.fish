@@ -38,12 +38,5 @@ set -gx GOPATH $HOME/go; set -gx GOROOT $HOME/.go; set -gx PATH $GOPATH/bin $PAT
 set --export BUN_INSTALL "$HOME/.bun"
 set --export PATH $BUN_INSTALL/bin $PATH
 
-
-# Added by Windsurf
-fish_add_path /Users/el/.codeium/windsurf/bin
-
 # atuin initialization
 atuin init fish | source
-
-# Added by LM Studio CLI (lms)
-set -gx PATH $PATH /Users/el/.lmstudio/bin

@@ -10,6 +10,7 @@ end
 
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+--<|editable_region_start|>
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
 	local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
@@ -27,6 +28,16 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Start plugins setup
 require('lazy').setup({
+		{
+			'MagicDuck/grug-far.nvim',
+			config = function()
+				require('grug-far').setup({
+					-- options, see Configuration section below
+					-- there are no required options atm
+					-- engine = 'astgrep'
+				});
+			end
+		},
 		{
 			'brenoprata10/nvim-highlight-colors',
 			config = function()
@@ -110,6 +121,9 @@ require('lazy').setup({
 					mistral = {
 						-- model = "codestral-latest",
 						model = "mistral-large-latest",
+					},
+					anthropic = {
+						model = "claude-3-7-sonnet-latest",
 					},
 				})
 			end,
@@ -261,8 +275,8 @@ require('lazy').setup({
 				vim.keymap.set('n', '<leader>fc', function() fzf.files({ cwd = '~/.config' }) end)
 				vim.keymap.set('n', '<c-p>', function() fzf.files({ winopts = { preview = { hidden = 'hidden' } } }) end)
 				vim.keymap.set('n', '<c-F>', function() fzf.grep_project() end)
-				vim.keymap.set('n', ';ht', function() fzf.help_tags() end, { silent = true })
-				vim.keymap.set('n', ';km', function() fzf.keymaps() end, { silent = true })
+				vim.keymap.set('n', '<leader>ht', function() fzf.help_tags() end, { silent = true })
+				vim.keymap.set('n', '<leader>km', function() fzf.keymaps() end, { silent = true })
 				-- use keymap.set
 			end,
 		},
@@ -364,11 +378,12 @@ lsp.format_on_save({
 })
 
 lsp.ensure_installed({
-	'ts_ls', 'gopls', 'lua_ls', 'zls', 'rust_analyzer', 'biome', 'eslint',
+	'ts_ls', 'gopls', 'lua_ls', 'zls', 'biome', 'eslint', 'rust_analyzer'
 })
 -- (Optional) Configure lua language server for neovim
 require('lspconfig').lua_ls.setup(lsp.nvim_lua_ls())
 require('lspconfig').biome.setup({})
+require('lspconfig').rust_analyzer.setup({})
 
 lsp.setup()
 
@@ -414,7 +429,7 @@ opt.hlsearch = false      -- Disable search highlight
 opt.shiftwidth = 2        -- Shift 4 spaces when tab
 opt.tabstop = 2           -- 1 tab == 4 spaces
 opt.softtabstop = 2       -- display 1 tab as 2 spaces
-opt.smartindent = true    -- Auto indent new lines
+-- opt.smartindent = true    -- Auto indent new lines
 -- Performance
 opt.updatetime = 700
 
