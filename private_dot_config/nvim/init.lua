@@ -98,8 +98,8 @@ require("lazy").setup(
 		},
 		{
 			"Wansmer/treesj",
-			keys = { "<leader><space>m", "<leader><space>j", "<leader><space>s" },
-			dependencies = { "nvim-treesitter/nvim-treesitter" }, -- if you install parsers with `nvim-treesitter`
+			keys = { "<leader>m" },
+			dependencies = { "nvim-treesitter/nvim-treesitter" },
 			config = function()
 				require("treesj").setup({})
 			end,
@@ -188,10 +188,7 @@ require("lazy").setup(
 			name = "catppuccin",
 			config = function()
 				vim.g.catppuccin_flavour = "mocha"
-				local mocha = require("catppuccin.palettes").get_palette("mocha")
-				require("catppuccin").setup({
-					highlight_overrides = { mocha = { LineNr = { fg = mocha.overlay0 } } },
-				}) -- make relative number more visible
+				require("catppuccin").setup()
 				vim.cmd([[colorscheme catppuccin]])
 			end,
 		},
