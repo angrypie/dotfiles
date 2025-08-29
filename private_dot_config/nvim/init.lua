@@ -424,9 +424,6 @@ map("n", "<C-w>N", "<C-w>K")
 map("n", "<C-w>S", "<C-w>L")
 map("n", "<C-w>T", "<C-w>J")
 
-map("n", "F", [["+yy]]) -- In normal mode copy current line
-map("v", "F", [["+y]]) -- In visual mode copy selected lines
-
 -- Mappings
 -- bulk_map sets keymap for multiple rules and repeats for multiple modes
 local function bulk_map(modes, rules)
@@ -440,3 +437,5 @@ end
 -- stylua: ignore start
 bulk_map({ "n", "v", "o" }, { { ",", "w" }, { "'", "q" }, { ".", "e" }, { "p", "r" }, { "y", "t" }, { "f", "y" }, { "g", "u" }, { "c", "i" }, { "r", "o" }, { "l", "p" }, { "=", "]" }, { "a", "a" }, { "o", "s" }, { "e", "d" }, { "u", "f" }, { "i", "g" }, { "h", "h" }, { "t", "j" }, { "n", "k" }, { "s", "l" }, { "-", "'" }, { "q", "x" }, { "j", "c" }, { "k", "v" }, { "x", "b" }, { "b", "n" }, { "m", "m" }, { "w", "," }, { "v", "." }, { "z", "/" }, { '"', "Q" }, { "<", "W" }, { ">", "E" }, { "P", "R" }, { "Y", "T" }, { "F", "Y" }, { "G", "U" }, { "C", "I" }, { "R", "O" }, { "L", "P" }, { "?", "{" }, { "+", "}" }, { "A", "A" }, { "O", "S" }, { "E", "D" }, { "U", "F" }, { "I", "G" }, { "D", "H" }, { "H", "J" }, { "T", "K" }, { "N", "L" }, { "_", '"' }, { "Q", "X" }, { "J", "C" }, { "K", "V" }, { "X", "B" }, { "B", "N" }, { "W", "<" }, { "V", ">" }, { "[", "-" }, { "]", "=" }, { "{", "_" }, { "}", "+" }, { "ii", "gg" }, })
 -- stylua: ignore end
+map("n", "F", [["+yy]]) -- In normal mode copy current line
+map("v", "F", [["+y]]) -- In visual mode copy selected lines
