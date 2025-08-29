@@ -12,6 +12,7 @@ end
 
 # fish auto expand command n to nvim
 abbr --add --global n nvim
+abbr --add --global updots atuin scripts run updots
 
 # Env, editor, history
 set -gx EDITOR nvim
