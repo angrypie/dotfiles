@@ -30,6 +30,17 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup(
 	{
 		{
+			"rachartier/tiny-inline-diagnostic.nvim",
+			event = "VeryLazy", -- Or `LspAttach`
+			priority = 1000, -- needs to be loaded in first
+			config = function()
+				require("tiny-inline-diagnostic").setup({
+					preset = "minimal",
+				})
+				vim.diagnostic.config({ virtual_text = false }) -- Only if needed in your configuration, if you already have native LSP diagnostics
+			end,
+		},
+		{ -- formating
 			"stevearc/conform.nvim",
 			opts = {},
 			config = function()
@@ -46,19 +57,11 @@ require("lazy").setup(
 						-- You can customize some of the format options for the filetype (:help conform.format)
 						-- rust = { "rustfmt", lsp_format = "fallback" },
 						-- Conform will run the first available formatter
-						javascript = { "biome", "prettierd", "prettier", stop_after_first = true },
-						typescript = { "biome", "prettierd", "prettier", stop_after_first = true },
+						javascript = { "biome-check", "prettierd", "prettier", stop_after_first = true },
+						typescript = { "biome-check", "prettierd", "prettier", stop_after_first = true },
+						typescriptreact = { "biome-check", "prettierd", "prettier", stop_after_first = true },
+						javascriptreact = { "biome-check", "prettierd", "prettier", stop_after_first = true },
 					},
-				})
-			end,
-		},
-		{
-			"MagicDuck/grug-far.nvim",
-			config = function()
-				require("grug-far").setup({
-					-- options, see Configuration section below
-					-- there are no required options atm
-					-- engine = 'astgrep'
 				})
 			end,
 		},
@@ -80,90 +83,8 @@ require("lazy").setup(
 			"folke/todo-comments.nvim",
 			dependencies = { "nvim-lua/plenary.nvim" },
 			opts = {
-				keywords = {
-					FIXMINE = { icon = " ", color = "comment", alt = { "FIXMINE", "TODO" } },
-				},
 				colors = { comment = { "Comment", "#000000" } },
 				highlight = { multiline = false, pattern = [[.*<(KEYWORDS)\s*: angrypie]] },
-			},
-		},
-		---@module 'snacks'
-		{
-			"folke/snacks.nvim",
-			priority = 1000,
-			lazy = false,
-			---@type snacks.Config
-			opts = {
-				debug = { enabled = true },
-				gitbrowser = { enabled = true },
-				-- notifier = { enabled = true },
-				lazygit = { enabled = true },
-				picker = {
-					enabled = true,
-					sources = {
-						files = { hidden = true },
-					},
-					layout = {
-						cycle = true,
-						preset = function()
-							return vim.o.columns >= 120 and "default" or "vertical"
-						end,
-					},
-				},
-			},
-			dependencies = {
-				{
-					"folke/todo-comments.nvim",
-					optional = true,
-					keys = {
-						{
-							"<leader>st",
-							function()
-								---@diagnostic disable-next-line: undefined-field
-								Snacks.picker.todo_comments()
-							end,
-							desc = "Todo",
-						},
-						{
-							"<leader>sT",
-							function()
-								---@diagnostic disable-next-line: undefined-field
-								Snacks.picker.todo_comments({ keywords = { "FIXMINE" } })
-							end,
-							desc = "Search for mine tags",
-						},
-					},
-				},
-			},
-			keys = {
-				{
-					"<leader>lg",
-					function()
-						Snacks.lazygit()
-					end,
-					desc = "LazyGit",
-				},
-				{
-					"<leader>go",
-					function()
-						Snacks.gitbrowse.open()
-					end,
-					desc = "Get Browse",
-				},
-				{
-					"<leader>no",
-					function()
-						Snacks.picker.notifications()
-					end,
-					desc = "Notification History",
-				},
-				{
-					"<leader>rec",
-					function()
-						Snacks.picker.recent()
-					end,
-					desc = "Recent files",
-				},
 			},
 		},
 		{
@@ -319,23 +240,42 @@ require("lazy").setup(
 				local fzf = require("fzf-lua")
 				require("fzf-lua").register_ui_select()
 				fzf.setup({ fzf_opts = { ["--layout"] = "default" } })
-				-- search in  .config dir
+				-- search in config dirs
 				vim.keymap.set("n", "<leader>fc", function()
 					fzf.files({ cwd = "~/.config" })
-				end)
+				end, { desc = "Search files in config directory" })
+
+				vim.keymap.set("n", "<leader>fcg", function()
+					fzf.grep({ cwd = "~/.config", search = "" })
+				end, { desc = "Grep files in config directory" })
+
+				vim.keymap.set("n", "<leader>fv", function()
+					fzf.grep({ cwd = "~/.config/nvim", search = "" })
+				end, { desc = "Search files in config directory" })
+
 				vim.keymap.set("n", "<c-p>", function()
-					fzf.files({ winopts = { preview = { hidden = "hidden" } } })
-				end)
+					fzf.files({ winopts = { preview = { hidden = true } } })
+				end, { desc = "Search for all files" })
+
 				vim.keymap.set("n", "<c-F>", function()
 					fzf.grep_project()
-				end)
+				end, { desc = "Grep in project files" })
+
 				vim.keymap.set("n", "<leader>ht", function()
 					fzf.help_tags()
-				end, { silent = true })
+				end, { silent = true, desc = "Search for help tags" })
+
 				vim.keymap.set("n", "<leader>km", function()
 					fzf.keymaps()
-				end, { silent = true })
-				-- use keymap.set
+				end, { silent = true, desc = "Search for keymaps" })
+
+				vim.keymap.set("n", "<leader>st", function()
+					require("fzf-lua").grep({
+						search = "TODO|FIXME|HACK|NOTE|PERF|WARN",
+						prompt = "TODOS >",
+						no_esc = true, -- Don't escape the pattern
+					})
+				end, { silent = true, desc = "Search for keymaps" })
 			end,
 		},
 		{ -- optional cmp completion source for require statements and module annotations
@@ -448,12 +388,6 @@ cmp.setup({
 	},
 })
 
--- setup (disable) diagnostic virtual text
-vim.diagnostic.config({
-	virtual_text = true,
-	severity_sort = true,
-})
-
 -- Options
 local opt = vim.opt
 -- UI
@@ -479,16 +413,6 @@ opt.updatetime = 700
 
 opt.shortmess:append("sI") -- Disable nvim intro
 
--- Mappings
--- bulk_map sets keymap for multiple rules and repeats for multiple modes
-local function bulk_map(modes, rules)
-	for _, mode in pairs(modes) do
-		for _, rule in pairs(rules) do
-			map(mode, rule[1], rule[2])
-		end
-	end
-end
-
 map("i", "eu", "<ESC>") -- escape from insert mode
 
 -- Move between panes TODO use tmux like mappings M-h for left etc?
@@ -500,73 +424,19 @@ map("n", "<C-w>N", "<C-w>K")
 map("n", "<C-w>S", "<C-w>L")
 map("n", "<C-w>T", "<C-w>J")
 
--- My Dvorak remap (attention: not all keys remapped exactly right, it's just my preferences)
-bulk_map({ "n", "v", "o" }, {
-	{ ",", "w" },
-	{ "'", "q" },
-	{ ".", "e" },
-	{ "p", "r" },
-	{ "y", "t" },
-	{ "f", "y" },
-	{ "g", "u" },
-	{ "c", "i" },
-	{ "r", "o" },
-	{ "l", "p" },
-	{ "=", "]" },
-	{ "a", "a" },
-	{ "o", "s" },
-	{ "e", "d" },
-	{ "u", "f" },
-	{ "i", "g" },
-	{ "h", "h" },
-	{ "t", "j" },
-	{ "n", "k" },
-	{ "s", "l" },
-	{ "-", "'" },
-	{ "q", "x" },
-	{ "j", "c" },
-	{ "k", "v" },
-	{ "x", "b" },
-	{ "b", "n" },
-	{ "m", "m" },
-	{ "w", "," },
-	{ "v", "." },
-	{ "z", "/" },
-	{ '"', "Q" },
-	{ "<", "W" },
-	{ ">", "E" },
-	{ "P", "R" },
-	{ "Y", "T" },
-	{ "F", "Y" },
-	{ "G", "U" },
-	{ "C", "I" },
-	{ "R", "O" },
-	{ "L", "P" },
-	{ "?", "{" },
-	{ "+", "}" },
-	{ "A", "A" },
-	{ "O", "S" },
-	{ "E", "D" },
-	{ "U", "F" },
-	{ "I", "G" },
-	{ "D", "H" },
-	{ "H", "J" },
-	{ "T", "K" },
-	{ "N", "L" },
-	{ "_", '"' },
-	{ "Q", "X" },
-	{ "J", "C" },
-	{ "K", "V" },
-	{ "X", "B" },
-	{ "B", "N" },
-	{ "W", "<" },
-	{ "V", ">" },
-	{ "[", "-" },
-	{ "]", "=" },
-	{ "{", "_" },
-	{ "}", "+" },
-	{ "ii", "gg" },
-})
-
 map("n", "F", [["+yy]]) -- In normal mode copy current line
 map("v", "F", [["+y]]) -- In visual mode copy selected lines
+
+-- Mappings
+-- bulk_map sets keymap for multiple rules and repeats for multiple modes
+local function bulk_map(modes, rules)
+	for _, mode in pairs(modes) do
+		for _, rule in pairs(rules) do
+			map(mode, rule[1], rule[2])
+		end
+	end
+end
+-- My Dvorak remap (attention: not all keys remapped exactly right, it's just my preferences)
+-- stylua: ignore start
+bulk_map({ "n", "v", "o" }, { { ",", "w" }, { "'", "q" }, { ".", "e" }, { "p", "r" }, { "y", "t" }, { "f", "y" }, { "g", "u" }, { "c", "i" }, { "r", "o" }, { "l", "p" }, { "=", "]" }, { "a", "a" }, { "o", "s" }, { "e", "d" }, { "u", "f" }, { "i", "g" }, { "h", "h" }, { "t", "j" }, { "n", "k" }, { "s", "l" }, { "-", "'" }, { "q", "x" }, { "j", "c" }, { "k", "v" }, { "x", "b" }, { "b", "n" }, { "m", "m" }, { "w", "," }, { "v", "." }, { "z", "/" }, { '"', "Q" }, { "<", "W" }, { ">", "E" }, { "P", "R" }, { "Y", "T" }, { "F", "Y" }, { "G", "U" }, { "C", "I" }, { "R", "O" }, { "L", "P" }, { "?", "{" }, { "+", "}" }, { "A", "A" }, { "O", "S" }, { "E", "D" }, { "U", "F" }, { "I", "G" }, { "D", "H" }, { "H", "J" }, { "T", "K" }, { "N", "L" }, { "_", '"' }, { "Q", "X" }, { "J", "C" }, { "K", "V" }, { "X", "B" }, { "B", "N" }, { "W", "<" }, { "V", ">" }, { "[", "-" }, { "]", "=" }, { "{", "_" }, { "}", "+" }, { "ii", "gg" }, })
+-- stylua: ignore end

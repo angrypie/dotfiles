@@ -33,10 +33,15 @@ fish_add_path $HOME/.local/share/bob/nvim-bin # https://github.com/MordechaiHada
 abbr --add --global g git && abbr -e g # Remove g abbreviation for git. Add abbreviation first to avoid erros if not exist.
 set -gx GOPATH $HOME/go; set -gx GOROOT $HOME/.go; set -gx PATH $GOPATH/bin $PATH; # g-install: do NOT edit, see https://github.com/stefanmaric/g
 
-
 # bun
 set --export BUN_INSTALL "$HOME/.bun"
 set --export PATH $BUN_INSTALL/bin $PATH
 
 # atuin initialization
 atuin init fish | source
+
+
+# Added by LM Studio CLI (lms)
+set -gx PATH $PATH /Users/el/.lmstudio/bin
+# End of LM Studio CLI section
+
