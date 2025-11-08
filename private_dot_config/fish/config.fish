@@ -14,6 +14,10 @@ end
 abbr --add --global n nvim
 abbr --add --global updots atuin scripts run updots
 
+function nvc # nvc opens neovim in .config directory
+	nvim -c "cd $HOME/.config" $HOME/.config/nvim/init.lua
+end
+
 # Env, editor, history
 set -gx EDITOR nvim
 set -U FZF_DEFAULT_COMMAND "rg --files \$dir" # exclude .gitigore files
@@ -46,3 +50,6 @@ atuin init fish | source
 set -gx PATH $PATH /Users/el/.lmstudio/bin
 # End of LM Studio CLI section
 
+
+# Added by Windsurf
+fish_add_path /Users/el/.codeium/windsurf/bin
