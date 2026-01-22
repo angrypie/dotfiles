@@ -17,7 +17,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	if vim.v.shell_error ~= 0 then
 		vim.api.nvim_echo({
 			{ "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-			{ out, "WarningMsg" },
+			{ out,                            "WarningMsg" },
 			{ "\nPress any key to exit..." },
 		}, true, {})
 		vim.fn.getchar()
@@ -219,7 +219,7 @@ require("lazy").setup(
 			"phaazon/hop.nvim", -- Easy-motion like file navigation
 			config = function()
 				require("hop").setup()
-				map("n", ";", "<cmd>HopChar2<cr>") -- experimental
+				map("n", ";", "<cmd>HopChar2<cr>")    -- experimental
 				vim.cmd([[hi HopNextKey2 guifg=#00dfff]]) -- Second character same color as first one
 			end,
 		},
@@ -374,8 +374,8 @@ cmp.setup({
 	sources = {
 		{ name = "lazydev" },
 		{ name = "nvim_lsp" },
-		{ name = "path", keyword_length = 2 },
-		{ name = "buffer", keyword_length = 3 },
+		{ name = "path",                   keyword_length = 2 },
+		{ name = "buffer",                 keyword_length = 3 },
 		{ name = "nvim_lsp_signature_help" },
 	},
 	mapping = {
@@ -388,29 +388,29 @@ cmp.setup({
 -- Options
 local opt = vim.opt
 -- UI
-opt.termguicolors = true -- Enable 24-bit RGB colors
-opt.number = true -- Show line number
+opt.termguicolors = true  -- Enable 24-bit RGB colors
+opt.number = true         -- Show line number
 opt.relativenumber = true -- Show relative line number
-opt.showmode = false -- Hide mode name
-opt.splitright = true -- Vertical split to the right
-opt.splitbelow = true -- Horizontal split to the bottom
-opt.ignorecase = true -- Ignore case letters when search
-opt.smartcase = true -- Ignore lowercase for the whole pattern
-opt.scrolloff = 8 -- Set scroll offset
-opt.confirm = true -- Confirm before exiting
+opt.showmode = false      -- Hide mode name
+opt.splitright = true     -- Vertical split to the right
+opt.splitbelow = true     -- Horizontal split to the bottom
+opt.ignorecase = true     -- Ignore case letters when search
+opt.smartcase = true      -- Ignore lowercase for the whole pattern
+opt.scrolloff = 8         -- Set scroll offset
+opt.confirm = true        -- Confirm before exiting
 opt.signcolumn = "number" -- Show signs in the number column
-opt.hlsearch = false -- Disable search highlight
+opt.hlsearch = false      -- Disable search highlight
 -- Tabs, indent
-opt.shiftwidth = 2 -- Shift 4 spaces when tab
-opt.tabstop = 2 -- 1 tab == 4 spaces
-opt.softtabstop = 2 -- display 1 tab as 2 spaces
+opt.shiftwidth = 2        -- Shift 4 spaces when tab
+opt.tabstop = 2           -- 1 tab == 4 spaces
+opt.softtabstop = 2       -- display 1 tab as 2 spaces
 -- opt.smartindent = true    -- Auto indent new lines
 -- Performance
 opt.updatetime = 700
 
 opt.shortmess:append("sI") -- Disable nvim intro
 
-map("i", "eu", "<ESC>") -- escape from insert mode
+map("i", "eu", "<ESC>")    -- escape from insert mode
 
 -- Move between panes TODO use tmux like mappings M-h for left etc?
 map("n", "<C-w>n", "<C-w>k")
@@ -432,8 +432,9 @@ local function bulk_map(modes, rules)
 end
 -- My Dvorak remap (attention: not all keys remapped exactly right, it's just my preferences)
 -- stylua: ignore start
-bulk_map({ "n", "v", "o" }, { { ",", "w" }, { "'", "q" }, { ".", "e" }, { "p", "r" }, { "y", "t" }, { "f", "y" }, { "g", "u" }, { "c", "i" }, { "r", "o" }, { "l", "p" }, { "=", "]" }, { "a", "a" }, { "o", "s" }, { "e", "d" }, { "u", "f" }, { "i", "g" }, { "h", "h" }, { "t", "j" }, { "n", "k" }, { "s", "l" }, { "-", "'" }, { "q", "x" }, { "j", "c" }, { "k", "v" }, { "x", "b" }, { "b", "n" }, { "m", "m" }, { "w", "," }, { "v", "." }, { "z", "/" }, { '"', "Q" }, { "<", "W" }, { ">", "E" }, { "P", "R" }, { "Y", "T" }, { "F", "Y" }, { "G", "U" }, { "C", "I" }, { "R", "O" }, { "L", "P" }, { "?", "{" }, { "+", "}" }, { "A", "A" }, { "O", "S" }, { "E", "D" }, { "U", "F" }, { "I", "G" }, { "D", "H" }, { "H", "J" }, { "T", "K" }, { "N", "L" }, { "_", '"' }, { "Q", "X" }, { "J", "C" }, { "K", "V" }, { "X", "B" }, { "B", "N" }, { "W", "<" }, { "V", ">" }, { "[", "-" }, { "]", "=" }, { "{", "_" }, { "}", "+" }, { "ii", "gg" }, })
+bulk_map({ "n", "v", "o" },
+	{ { ",", "w" }, { "'", "q" }, { ".", "e" }, { "p", "r" }, { "y", "t" }, { "f", "y" }, { "g", "u" }, { "c", "i" }, { "r", "o" }, { "l", "p" }, { "=", "]" }, { "a", "a" }, { "o", "s" }, { "e", "d" }, { "u", "f" }, { "i", "g" }, { "h", "h" }, { "t", "j" }, { "n", "k" }, { "s", "l" }, { "-", "'" }, { "q", "x" }, { "j", "c" }, { "k", "v" }, { "x", "b" }, { "b", "n" }, { "m", "m" }, { "w", "," }, { "v", "." }, { "z", "/" }, { '"', "Q" }, { "<", "W" }, { ">", "E" }, { "P", "R" }, { "Y", "T" }, { "F", "Y" }, { "G", "U" }, { "C", "I" }, { "R", "O" }, { "L", "P" }, { "?", "{" }, { "+", "}" }, { "A", "A" }, { "O", "S" }, { "E", "D" }, { "U", "F" }, { "I", "G" }, { "D", "H" }, { "H", "J" }, { "T", "K" }, { "N", "L" }, { "_", '"' }, { "Q", "X" }, { "J", "C" }, { "K", "V" }, { "X", "B" }, { "B", "N" }, { "W", "<" }, { "V", ">" }, { "[", "-" }, { "]", "=" }, { "{", "_" }, { "}", "+" }, { "ii", "gg" }, })
 -- stylua: ignore end
 
 map("n", "F", [["+yy]]) -- In normal mode copy current line
-map("v", "F", [["+y]]) -- In visual mode copy selected lines
+map("v", "F", [["+y]])  -- In visual mode copy selected lines

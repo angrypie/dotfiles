@@ -53,3 +53,6 @@ set -gx PATH $PATH /Users/el/.lmstudio/bin
 
 # Added by Windsurf
 fish_add_path /Users/el/.codeium/windsurf/bin
+
+# opencode
+fish_add_path /Users/el/.opencode/bin
