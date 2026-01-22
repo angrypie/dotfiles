@@ -2,14 +2,9 @@
 
 	brew install chezmoi
 
-**apply existing config to current system**
+**apply existing config**
 
 	chezmoi init --apply angrypie
-
-**add changes from current system to config**
-
-    chezmoi re-add
-
 
 **install on any system**
 
