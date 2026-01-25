@@ -30,6 +30,12 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup(
 	{
 		{
+			"alex-popov-tech/store.nvim",
+			dependencies = { "OXY2DEV/markview.nvim" },
+			opts = {},
+			cmd = "Store"
+		},
+		{
 			"rachartier/tiny-inline-diagnostic.nvim",
 			event = "VeryLazy", -- Or `LspAttach`
 			priority = 1000, -- needs to be loaded in first

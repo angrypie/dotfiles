@@ -2,17 +2,9 @@
 
 	brew install chezmoi
 
-**apply existing config to current system**
+**apply existing config**
 
 	chezmoi init --apply angrypie
-
-**add changes from current system to config**
-
-    chezmoi re-add --verbose
-
-**use atuin to the same re-add script**
-
-	atuin scripts run updots 
 
 **install on any system**
 

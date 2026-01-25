@@ -14,6 +14,17 @@ end
 abbr --add --global n nvim
 abbr --add --global updots atuin scripts run updots
 
+# swaps one command to another one and prints notice to stdout
+function _swap_command
+    set -l cmd $argv[1]
+    set -l args $argv[2..-1]
+    set_color yellow; echo "→ $cmd $args" >&2; set_color normal
+    $cmd $args
+end
+
+function npm; _swap_command bun $argv; end
+function npx; _swap_command bunx $argv; end
+
 function nvc # nvc opens neovim in .config directory
 	nvim -c "cd $HOME/.config" $HOME/.config/nvim/init.lua
 end
