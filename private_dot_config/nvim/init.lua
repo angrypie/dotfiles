@@ -30,10 +30,45 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup(
 	{
 		{
-			"alex-popov-tech/store.nvim",
-			dependencies = { "OXY2DEV/markview.nvim" },
-			opts = {},
-			cmd = "Store"
+			"ThePrimeagen/99",
+			config = function()
+				local _99 = require("99")
+				-- For logging that is to a file if you wish to trace through requests
+				-- for reporting bugs, i would not rely on this, but instead the provided
+				-- logging mechanisms within 99.  This is for more debugging purposes
+				_99.setup({
+					model = "openai/gpt-5.2-codex",
+					--- A new feature that is centered around tags
+					completion = {
+						custom_rules = {
+							"./opencode/rules",
+						},
+						source = "cmp",
+					},
+					md_files = {
+						"AGENTS.md",
+					},
+				})
+
+				-- Create your own short cuts for the different types of actions
+				vim.keymap.set("n", "<c-l>", function()
+					_99.fill_in_function()
+				end)
+
+				vim.keymap.set("v", "<leader>lv", function()
+					_99.visual()
+				end)
+
+				--- if you have a request you dont want to make any changes, just cancel it
+				vim.keymap.set("v", "<leader>ls", function()
+					_99.stop_all_requests()
+				end)
+			end,
+		},
+		{
+			"esmuellert/codediff.nvim",
+			dependencies = { "MunifTanjim/nui.nvim" },
+			cmd = "CodeDiff",
 		},
 		{
 			"rachartier/tiny-inline-diagnostic.nvim",
@@ -75,14 +110,6 @@ require("lazy").setup(
 			"brenoprata10/nvim-highlight-colors",
 			config = function()
 				require("nvim-highlight-colors").setup({})
-			end,
-		},
-		{
-			"michaelb/sniprun", -- run selected code in repl
-			build = "sh ./install.sh",
-			config = function()
-				map("v", "<leader>r", "<Plug>SnipRun", { silent = true })
-				map("n", "<leader>rc", "<Plug>SnipClose", { silent = true })
 			end,
 		},
 		{
@@ -291,7 +318,6 @@ require("lazy").setup(
 				})
 			end,
 			dependencies = {
-				{ "L3MON4D3/LuaSnip" },
 				{ "hrsh7th/cmp-path" },
 				{ "hrsh7th/cmp-buffer" },
 				{ "hrsh7th/nvim-cmp" },
@@ -444,3 +470,61 @@ bulk_map({ "n", "v", "o" },
 
 map("n", "F", [["+yy]]) -- In normal mode copy current line
 map("v", "F", [["+y]])  -- In visual mode copy selected lines
+
+
+local function get_current_diagnostics()
+	local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+	local diagnostics = vim.diagnostic.get(0, { lnum = line - 1 })
+	for _, diag in ipairs(diagnostics) do
+		-- Check if cursor is within the diagnostic range
+		if col >= diag.col and col <= (diag.end_col or diag.col) then
+			print("Diagnostic: " .. diag.message)
+		end
+	end
+end
+
+
+local function comment_and_insert_diagnostic()
+	local bufnr = 0
+	local row = vim.api.nvim_win_get_cursor(0)[1]
+	local lnum = row - 1 -- 0-indexed
+
+	local diagnostics = vim.diagnostic.get(bufnr, { lnum = lnum })
+
+	if #diagnostics == 0 then
+		vim.notify("No diagnostics on current line", vim.log.levels.WARN)
+		return
+	end
+
+	local cs = vim.bo.commentstring
+	if cs == "" or not cs:find("%%s") then
+		cs = "// %s"
+	end
+
+	-- Comment current line
+	local current_line = vim.api.nvim_buf_get_lines(bufnr, lnum, lnum + 1, false)[1]
+	local commented_line = cs:format(current_line)
+	vim.api.nvim_buf_set_lines(bufnr, lnum, lnum + 1, false, { commented_line })
+
+	-- Build lines to insert
+	local lines_to_insert = {}
+	for _, d in ipairs(diagnostics) do
+		local severity = vim.diagnostic.severity[d.severity] or "UNKNOWN"
+		-- Split message on newlines to handle multi-line diagnostics
+		local msg_lines = vim.split(d.message, "\n", { plain = true, trimempty = true })
+		for i, msg_line in ipairs(msg_lines) do
+			local prefix = i == 1 and string.format("[%s] ", severity) or "  "
+			local diag_comment = cs:format(prefix .. msg_line)
+			table.insert(lines_to_insert, diag_comment)
+		end
+	end
+	table.insert(lines_to_insert, "") -- Empty line for typing
+
+	vim.api.nvim_buf_set_lines(bufnr, row, row, false, lines_to_insert)
+
+	local new_line = row + #lines_to_insert
+	vim.api.nvim_win_set_cursor(0, { new_line, 0 })
+	vim.cmd("startinsert")
+end
+
+vim.keymap.set('n', '<c-s>', comment_and_insert_diagnostic, { desc = "Comment line, insert diagnostic, start fix" })
