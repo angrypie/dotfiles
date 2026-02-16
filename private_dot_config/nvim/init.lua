@@ -66,9 +66,11 @@ require("lazy").setup(
 			end,
 		},
 		{
-			"esmuellert/codediff.nvim",
-			dependencies = { "MunifTanjim/nui.nvim" },
-			cmd = "CodeDiff",
+			'tanvirtin/vgit.nvim',
+			dependencies = { 'nvim-lua/plenary.nvim', 'nvim-tree/nvim-web-devicons' },
+			-- Lazy loading on 'VimEnter' event is necessary.
+			event = 'VimEnter',
+			config = function() require("vgit").setup() end,
 		},
 		{
 			"rachartier/tiny-inline-diagnostic.nvim",
@@ -148,7 +150,7 @@ require("lazy").setup(
 				},
 			},
 		},
-		-- { dir = "/Users/el/Code/github.com/angrypie/moonwalk.nvim" },
+		{ dir = "/Users/el/Code/github.com/angrypie/moonwalk.nvim" },
 		{
 			"stevearc/oil.nvim", -- Edit directory as a regular buffer
 			config = function()
@@ -238,7 +240,7 @@ require("lazy").setup(
 			end,
 		},
 
-		{ "windwp/nvim-autopairs", config = true },
+		{ "windwp/nvim-autopairs",                                 config = true },
 
 		{
 			"numToStr/Comment.nvim", -- commenting plugin
@@ -527,4 +529,4 @@ local function comment_and_insert_diagnostic()
 	vim.cmd("startinsert")
 end
 
-vim.keymap.set('n', '<c-s>', comment_and_insert_diagnostic, { desc = "Comment line, insert diagnostic, start fix" })
+-- vim.keymap.set('n', '<c-s>', comment_and_insert_diagnostic, { desc = "Comment line, insert diagnostic, start fix" })

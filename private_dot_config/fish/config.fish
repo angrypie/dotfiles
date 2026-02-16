@@ -34,7 +34,10 @@ set -gx EDITOR nvim
 set -U FZF_DEFAULT_COMMAND "rg --files \$dir" # exclude .gitigore files
 set -U FZF_LEGACY_KEYBINDINGS 0
 bind \ef '__fzf_open --editor' # open file in default editor on <Option-f>
-bind \ct 'tmux capture-pane -p -S -E- | sed "/^\$/N;/^\n\$/D" | nvim -c "\$"' # open tmux buffer in nvim on <Control-t>
+# bind \ct 'tmux capture-pane -p -S -E- | sed "/^\$/N;/^\n\$/D" | nvim -c "\$"' # open tmux buffer in nvim on <Control-t>
+bind \ct 'tmux capture-pane -p -S - -E - | sed "/^\$/N;/^\n\$/D" | sed "1d;\$d" | nvim -c "\$"' # same but without first and last line
+
+
 
 # Remove standart greeting
 set -g fish_greeting
