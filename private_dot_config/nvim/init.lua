@@ -37,7 +37,7 @@ require("lazy").setup(
 				-- for reporting bugs, i would not rely on this, but instead the provided
 				-- logging mechanisms within 99.  This is for more debugging purposes
 				_99.setup({
-					model = "openai/gpt-5.2-codex",
+					model = "openai/gpt-5.3-codex",
 					--- A new feature that is centered around tags
 					completion = {
 						custom_rules = {
@@ -52,25 +52,21 @@ require("lazy").setup(
 
 				-- Create your own short cuts for the different types of actions
 				vim.keymap.set("n", "<c-l>", function()
-					_99.fill_in_function()
-				end)
-
-				vim.keymap.set("v", "<leader>lv", function()
 					_99.visual()
 				end)
-
 				--- if you have a request you dont want to make any changes, just cancel it
-				vim.keymap.set("v", "<leader>ls", function()
+				vim.keymap.set("v", "<leader>lx", function()
 					_99.stop_all_requests()
+				end)
+				vim.keymap.set("v", "<leader>ls", function()
+					_99.search()
 				end)
 			end,
 		},
 		{
-			'tanvirtin/vgit.nvim',
-			dependencies = { 'nvim-lua/plenary.nvim', 'nvim-tree/nvim-web-devicons' },
-			-- Lazy loading on 'VimEnter' event is necessary.
-			event = 'VimEnter',
-			config = function() require("vgit").setup() end,
+			"esmuellert/codediff.nvim",
+			dependencies = { "MunifTanjim/nui.nvim" },
+			cmd = "CodeDiff",
 		},
 		{
 			"rachartier/tiny-inline-diagnostic.nvim",

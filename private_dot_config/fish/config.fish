@@ -47,6 +47,7 @@ set --universal nvm_default_version lts
 
 fish_add_path /opt/homebrew/bin
 fish_add_path $HOME/.local/share/bob/nvim-bin # https://github.com/MordechaiHadad/bob
+fish_add_path $HOME/.local/bin
 
 # g is a golang plugin manager writen in fish.
 abbr --add --global g git && abbr -e g # Remove g abbreviation for git. Add abbreviation first to avoid erros if not exist.
