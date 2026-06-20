@@ -17,7 +17,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	if vim.v.shell_error ~= 0 then
 		vim.api.nvim_echo({
 			{ "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-			{ out,                            "WarningMsg" },
+			{ out, "WarningMsg" },
 			{ "\nPress any key to exit..." },
 		}, true, {})
 		vim.fn.getchar()
@@ -30,43 +30,16 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup(
 	{
 		{
-			"ThePrimeagen/99",
-			config = function()
-				local _99 = require("99")
-				-- For logging that is to a file if you wish to trace through requests
-				-- for reporting bugs, i would not rely on this, but instead the provided
-				-- logging mechanisms within 99.  This is for more debugging purposes
-				_99.setup({
-					model = "openai/gpt-5.3-codex",
-					--- A new feature that is centered around tags
-					completion = {
-						custom_rules = {
-							"./opencode/rules",
-						},
-						source = "cmp",
-					},
-					md_files = {
-						"AGENTS.md",
-					},
-				})
-
-				-- Create your own short cuts for the different types of actions
-				vim.keymap.set("n", "<c-l>", function()
-					_99.visual()
-				end)
-				--- if you have a request you dont want to make any changes, just cancel it
-				vim.keymap.set("v", "<leader>lx", function()
-					_99.stop_all_requests()
-				end)
-				vim.keymap.set("v", "<leader>ls", function()
-					_99.search()
-				end)
-			end,
-		},
-		{
 			"esmuellert/codediff.nvim",
 			dependencies = { "MunifTanjim/nui.nvim" },
 			cmd = "CodeDiff",
+			opts = {
+				keymaps = {
+					view = {
+						toggle_layout = "<leader>t",
+					},
+				},
+			},
 		},
 		{
 			"rachartier/tiny-inline-diagnostic.nvim",
@@ -146,13 +119,7 @@ require("lazy").setup(
 				},
 			},
 		},
-		{ dir = "/Users/el/Code/github.com/angrypie/moonwalk.nvim" },
-		{
-			"stevearc/oil.nvim", -- Edit directory as a regular buffer
-			config = function()
-				require("oil").setup()
-			end,
-		},
+		-- { dir = "/Users/el/Code/github.com/angrypie/moonwalk.nvim" },
 		{
 			"jake-stewart/multicursor.nvim",
 			branch = "1.0",
@@ -236,7 +203,7 @@ require("lazy").setup(
 			end,
 		},
 
-		{ "windwp/nvim-autopairs",                                 config = true },
+		{ "windwp/nvim-autopairs", config = true },
 
 		{
 			"numToStr/Comment.nvim", -- commenting plugin
@@ -250,7 +217,7 @@ require("lazy").setup(
 			"phaazon/hop.nvim", -- Easy-motion like file navigation
 			config = function()
 				require("hop").setup()
-				map("n", ";", "<cmd>HopChar2<cr>")    -- experimental
+				map("n", ";", "<cmd>HopChar2<cr>") -- experimental
 				vim.cmd([[hi HopNextKey2 guifg=#00dfff]]) -- Second character same color as first one
 			end,
 		},
@@ -404,8 +371,8 @@ cmp.setup({
 	sources = {
 		{ name = "lazydev" },
 		{ name = "nvim_lsp" },
-		{ name = "path",                   keyword_length = 2 },
-		{ name = "buffer",                 keyword_length = 3 },
+		{ name = "path", keyword_length = 2 },
+		{ name = "buffer", keyword_length = 3 },
 		{ name = "nvim_lsp_signature_help" },
 	},
 	mapping = {
@@ -418,29 +385,29 @@ cmp.setup({
 -- Options
 local opt = vim.opt
 -- UI
-opt.termguicolors = true  -- Enable 24-bit RGB colors
-opt.number = true         -- Show line number
+opt.termguicolors = true -- Enable 24-bit RGB colors
+opt.number = true -- Show line number
 opt.relativenumber = true -- Show relative line number
-opt.showmode = false      -- Hide mode name
-opt.splitright = true     -- Vertical split to the right
-opt.splitbelow = true     -- Horizontal split to the bottom
-opt.ignorecase = true     -- Ignore case letters when search
-opt.smartcase = true      -- Ignore lowercase for the whole pattern
-opt.scrolloff = 8         -- Set scroll offset
-opt.confirm = true        -- Confirm before exiting
+opt.showmode = false -- Hide mode name
+opt.splitright = true -- Vertical split to the right
+opt.splitbelow = true -- Horizontal split to the bottom
+opt.ignorecase = true -- Ignore case letters when search
+opt.smartcase = true -- Ignore lowercase for the whole pattern
+opt.scrolloff = 8 -- Set scroll offset
+opt.confirm = true -- Confirm before exiting
 opt.signcolumn = "number" -- Show signs in the number column
-opt.hlsearch = false      -- Disable search highlight
+opt.hlsearch = false -- Disable search highlight
 -- Tabs, indent
-opt.shiftwidth = 2        -- Shift 4 spaces when tab
-opt.tabstop = 2           -- 1 tab == 4 spaces
-opt.softtabstop = 2       -- display 1 tab as 2 spaces
+opt.shiftwidth = 2 -- Shift 4 spaces when tab
+opt.tabstop = 2 -- 1 tab == 4 spaces
+opt.softtabstop = 2 -- display 1 tab as 2 spaces
 -- opt.smartindent = true    -- Auto indent new lines
 -- Performance
 opt.updatetime = 700
 
 opt.shortmess:append("sI") -- Disable nvim intro
 
-map("i", "eu", "<ESC>")    -- escape from insert mode
+map("i", "eu", "<ESC>") -- escape from insert mode
 
 -- Move between panes TODO use tmux like mappings M-h for left etc?
 map("n", "<C-w>n", "<C-w>k")
@@ -467,62 +434,4 @@ bulk_map({ "n", "v", "o" },
 -- stylua: ignore end
 
 map("n", "F", [["+yy]]) -- In normal mode copy current line
-map("v", "F", [["+y]])  -- In visual mode copy selected lines
-
-
-local function get_current_diagnostics()
-	local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-	local diagnostics = vim.diagnostic.get(0, { lnum = line - 1 })
-	for _, diag in ipairs(diagnostics) do
-		-- Check if cursor is within the diagnostic range
-		if col >= diag.col and col <= (diag.end_col or diag.col) then
-			print("Diagnostic: " .. diag.message)
-		end
-	end
-end
-
-
-local function comment_and_insert_diagnostic()
-	local bufnr = 0
-	local row = vim.api.nvim_win_get_cursor(0)[1]
-	local lnum = row - 1 -- 0-indexed
-
-	local diagnostics = vim.diagnostic.get(bufnr, { lnum = lnum })
-
-	if #diagnostics == 0 then
-		vim.notify("No diagnostics on current line", vim.log.levels.WARN)
-		return
-	end
-
-	local cs = vim.bo.commentstring
-	if cs == "" or not cs:find("%%s") then
-		cs = "// %s"
-	end
-
-	-- Comment current line
-	local current_line = vim.api.nvim_buf_get_lines(bufnr, lnum, lnum + 1, false)[1]
-	local commented_line = cs:format(current_line)
-	vim.api.nvim_buf_set_lines(bufnr, lnum, lnum + 1, false, { commented_line })
-
-	-- Build lines to insert
-	local lines_to_insert = {}
-	for _, d in ipairs(diagnostics) do
-		local severity = vim.diagnostic.severity[d.severity] or "UNKNOWN"
-		-- Split message on newlines to handle multi-line diagnostics
-		local msg_lines = vim.split(d.message, "\n", { plain = true, trimempty = true })
-		for i, msg_line in ipairs(msg_lines) do
-			local prefix = i == 1 and string.format("[%s] ", severity) or "  "
-			local diag_comment = cs:format(prefix .. msg_line)
-			table.insert(lines_to_insert, diag_comment)
-		end
-	end
-	table.insert(lines_to_insert, "") -- Empty line for typing
-
-	vim.api.nvim_buf_set_lines(bufnr, row, row, false, lines_to_insert)
-
-	local new_line = row + #lines_to_insert
-	vim.api.nvim_win_set_cursor(0, { new_line, 0 })
-	vim.cmd("startinsert")
-end
-
--- vim.keymap.set('n', '<c-s>', comment_and_insert_diagnostic, { desc = "Comment line, insert diagnostic, start fix" })
+map("v", "F", [["+y]]) -- In visual mode copy selected lines
