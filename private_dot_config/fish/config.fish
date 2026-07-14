@@ -71,3 +71,6 @@ fish_add_path /Users/el/.codeium/windsurf/bin
 
 # opencode
 fish_add_path /Users/el/.opencode/bin
+
+# lazydiff
+fish_add_path /Users/niki/.lazydiff/bin

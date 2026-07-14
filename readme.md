@@ -23,15 +23,11 @@ Install Atuin (shell history)
 
 Install cli tools
 
-    brew install tmux fish fzf ripgrep fd bat scc bob
+    brew intall tmux fish fzf ripgrep fd bat scc bob
 
 Install neovim using bob verison manager
 
     bob use stable
-
-Install tmux plugin manager
-
-    git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
 
 Increase keyboard repeat rate to faster neovim navigation
 

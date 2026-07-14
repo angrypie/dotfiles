@@ -17,7 +17,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	if vim.v.shell_error ~= 0 then
 		vim.api.nvim_echo({
 			{ "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-			{ out, "WarningMsg" },
+			{ out,                            "WarningMsg" },
 			{ "\nPress any key to exit..." },
 		}, true, {})
 		vim.fn.getchar()
@@ -38,6 +38,17 @@ require("lazy").setup(
 					view = {
 						toggle_layout = "<leader>t",
 					},
+				},
+			},
+		},
+		{
+			"folke/lazydev.nvim",
+			ft = "lua",                  -- only load on lua files
+			opts = {
+				library = {
+					-- See the configuration section for more details
+					-- Load luvit types when the `vim.uv` word is found
+					{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
 				},
 			},
 		},
@@ -100,25 +111,6 @@ require("lazy").setup(
 				})
 			end,
 		},
-		{
-			"Wansmer/treesj",
-			keys = { "<leader>m" },
-			dependencies = { "nvim-treesitter/nvim-treesitter" },
-			config = function()
-				require("treesj").setup({})
-			end,
-		},
-		{
-			"folke/lazydev.nvim",
-			ft = "lua", -- only load on lua files
-			opts = {
-				library = {
-					-- See the configuration section for more details
-					-- Load luvit types when the `vim.uv` word is found
-					{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
-				},
-			},
-		},
 		-- { dir = "/Users/el/Code/github.com/angrypie/moonwalk.nvim" },
 		{
 			"jake-stewart/multicursor.nvim",
@@ -143,41 +135,6 @@ require("lazy").setup(
 						-- Default <esc> handler.
 					end
 				end)
-			end,
-		},
-		{
-			"nvim-treesitter/nvim-treesitter",
-			build = ":TSUpdate",
-			config = function()
-				require("nvim-treesitter.configs").setup({
-					incremental_selection = {
-						enable = true,
-						keymaps = {
-							init_selection = false,
-							node_incremental = "k",
-							scope_incremental = "<tab>",
-							node_decremental = "m",
-						},
-					},
-					ensure_installed = {
-						"go",
-						"typescript",
-						"tsx",
-						"javascript",
-						"lua",
-						"vim",
-						"zig",
-						"c",
-						"rust",
-					},
-					sync_install = false,
-					auto_install = false,
-					ignore_install = {},
-					modules = {},
-					highlight = {
-						enable = true,
-					},
-				})
 			end,
 		},
 
@@ -211,15 +168,6 @@ require("lazy").setup(
 				toggler = { line = "/" },
 				opleader = { line = "/" },
 			},
-		},
-
-		{
-			"phaazon/hop.nvim", -- Easy-motion like file navigation
-			config = function()
-				require("hop").setup()
-				map("n", ";", "<cmd>HopChar2<cr>") -- experimental
-				vim.cmd([[hi HopNextKey2 guifg=#00dfff]]) -- Second character same color as first one
-			end,
 		},
 
 		{
@@ -371,8 +319,8 @@ cmp.setup({
 	sources = {
 		{ name = "lazydev" },
 		{ name = "nvim_lsp" },
-		{ name = "path", keyword_length = 2 },
-		{ name = "buffer", keyword_length = 3 },
+		{ name = "path",                   keyword_length = 2 },
+		{ name = "buffer",                 keyword_length = 3 },
 		{ name = "nvim_lsp_signature_help" },
 	},
 	mapping = {
@@ -385,29 +333,29 @@ cmp.setup({
 -- Options
 local opt = vim.opt
 -- UI
-opt.termguicolors = true -- Enable 24-bit RGB colors
-opt.number = true -- Show line number
+opt.termguicolors = true  -- Enable 24-bit RGB colors
+opt.number = true         -- Show line number
 opt.relativenumber = true -- Show relative line number
-opt.showmode = false -- Hide mode name
-opt.splitright = true -- Vertical split to the right
-opt.splitbelow = true -- Horizontal split to the bottom
-opt.ignorecase = true -- Ignore case letters when search
-opt.smartcase = true -- Ignore lowercase for the whole pattern
-opt.scrolloff = 8 -- Set scroll offset
-opt.confirm = true -- Confirm before exiting
+opt.showmode = false      -- Hide mode name
+opt.splitright = true     -- Vertical split to the right
+opt.splitbelow = true     -- Horizontal split to the bottom
+opt.ignorecase = true     -- Ignore case letters when search
+opt.smartcase = true      -- Ignore lowercase for the whole pattern
+opt.scrolloff = 8         -- Set scroll offset
+opt.confirm = true        -- Confirm before exiting
 opt.signcolumn = "number" -- Show signs in the number column
-opt.hlsearch = false -- Disable search highlight
+opt.hlsearch = false      -- Disable search highlight
 -- Tabs, indent
-opt.shiftwidth = 2 -- Shift 4 spaces when tab
-opt.tabstop = 2 -- 1 tab == 4 spaces
-opt.softtabstop = 2 -- display 1 tab as 2 spaces
+opt.shiftwidth = 2        -- Shift 4 spaces when tab
+opt.tabstop = 2           -- 1 tab == 4 spaces
+opt.softtabstop = 2       -- display 1 tab as 2 spaces
 -- opt.smartindent = true    -- Auto indent new lines
 -- Performance
 opt.updatetime = 700
 
 opt.shortmess:append("sI") -- Disable nvim intro
 
-map("i", "eu", "<ESC>") -- escape from insert mode
+map("i", "eu", "<ESC>")    -- escape from insert mode
 
 -- Move between panes TODO use tmux like mappings M-h for left etc?
 map("n", "<C-w>n", "<C-w>k")
@@ -434,4 +382,4 @@ bulk_map({ "n", "v", "o" },
 -- stylua: ignore end
 
 map("n", "F", [["+yy]]) -- In normal mode copy current line
-map("v", "F", [["+y]]) -- In visual mode copy selected lines
+map("v", "F", [["+y]])  -- In visual mode copy selected lines

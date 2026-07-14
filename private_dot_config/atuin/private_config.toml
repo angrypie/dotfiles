@@ -270,3 +270,6 @@ filters = [ "global", "session", "workspace", "directory", "host" ]
 
 [dotfiles]
 enabled = true
+
+[ai]
+enabled = true
