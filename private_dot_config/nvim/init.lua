@@ -30,6 +30,26 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup(
 	{
 		{
+			"arborist-ts/arborist.nvim",
+			config = function()
+				require("arborist").setup({})
+			end,
+		},
+		{
+			"rebelot/kanagawa.nvim",
+			config = function()
+				require("kanagawa").setup({
+					compile = true
+				})
+				vim.cmd([[colorscheme kanagawa]])
+			end,
+		},
+		{
+			"r10a/prompt-reference.nvim",
+			-- opt-in default keymaps (see Configuration); omit to bind your own
+			opts = { keymaps = true },
+		},
+		{
 			"esmuellert/codediff.nvim",
 			dependencies = { "MunifTanjim/nui.nvim" },
 			cmd = "CodeDiff",
@@ -43,7 +63,7 @@ require("lazy").setup(
 		},
 		{
 			"folke/lazydev.nvim",
-			ft = "lua",                  -- only load on lua files
+			ft = "lua", -- only load on lua files
 			opts = {
 				library = {
 					-- See the configuration section for more details
@@ -144,7 +164,7 @@ require("lazy").setup(
 			config = function()
 				vim.g.catppuccin_flavour = "mocha"
 				require("catppuccin").setup()
-				vim.cmd([[colorscheme catppuccin]])
+				-- vim.cmd([[colorscheme catppuccin]])
 			end,
 		},
 
@@ -278,7 +298,7 @@ require("mason-lspconfig").setup({
 	automatic_enable = true,
 	ensure_installed = {
 		"ts_ls",
-		"gopls",
+		-- "gopls",
 		"lua_ls",
 		"zls",
 		"biome",
